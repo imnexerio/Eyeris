@@ -1,0 +1,295 @@
+import vision from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3";
+const { FaceLandmarker, FilesetResolver, DrawingUtils } = vision;
+
+const videoBlendShapes = document.getElementById("video-blend-shapes");
+let faceLandmarker;
+let runningMode = "IMAGE";
+let enableWebcamButton;
+let webcamRunning = false;
+const videoWidth = 480;
+
+let leftEyeOpen = 0;
+let leftEyeClosed = 0;
+let rightEyeOpen = 0;
+let rightEyeClosed = 0;
+
+// Function to retrieve and parse stored data
+function getStoredEyeBlinkData() {
+  const serializedData = localStorage.getItem('eyeBlinkData');
+  return JSON.parse(serializedData) || [];
+}
+
+// Retrieve initial data for chart
+const eyeBlinkData = getStoredEyeBlinkData();
+const labels = eyeBlinkData.map(data => new Date(data.timestamp));
+const dataPoints = eyeBlinkData.map(data => ({
+  time: new Date(data.timestamp),
+  leftEyeOpen: data.leftEye.open,
+  leftEyeClosed: data.leftEye.closed,
+  rightEyeOpen: data.rightEye.open,
+  rightEyeClosed: data.rightEye.closed,
+}));
+
+const ctx = document.getElementById('eyeBlinkChart').getContext('2d');
+
+const eyeBlinkChart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: labels,
+    datasets: [
+      {
+        label: 'Left Eye Blink',
+        stack: 'Stack 1',
+        data: dataPoints.map(point => point.leftEyeClosed / (point.leftEyeClosed + point.leftEyeOpen)),
+        backgroundColor: function(context) {
+          const value = context.dataset.data[context.dataIndex];
+          return getColorBasedOnRatio(value);
+        },
+      },
+      {
+        label: 'Right Eye Blink',
+        stack: 'Stack 2',
+        data: dataPoints.map(point => point.rightEyeClosed / (point.rightEyeClosed + point.rightEyeOpen)),
+        backgroundColor: function(context) {
+          const value = context.dataset.data[context.dataIndex];
+          return getColorBasedOnRatio(value);
+        },
+      },
+    ]
+  },
+  options: {
+    scales: {
+      x: {
+        type: 'time',
+        time: {
+          unit: 'minute'
+        }
+      },
+      y: {
+        beginAtZero: true,
+        stacked: true
+      }
+    }
+  }
+});
+
+// Function to get color based on ratio value
+function getColorBasedOnRatio(value) {
+  // Convert ratio to a value between 0 and 1
+  const normalizedValue = Math.min(Math.max(value, 0), 1);
+
+  // Define thresholds and corresponding colors
+  const thresholdRed = 0.1;
+  const thresholdYellow = 0.2;
+  const thresholdGreen = 0.3;
+  const hueRed = 0; // Red color
+  const hueYellow = 60; // Yellow color
+  const hueGreen = 120; // Green color
+
+  // Interpolate color based on thresholds
+  if (normalizedValue <= thresholdRed) {
+    return `hsl(${hueRed}, 100%, 50%)`; // Red color
+  } else if (normalizedValue <= thresholdYellow) {
+    // Interpolate between red and yellow
+    const interpolatedHue = (normalizedValue - thresholdRed) / (thresholdYellow - thresholdRed) * (hueYellow - hueRed) + hueRed;
+    return `hsl(${interpolatedHue}, 100%, 50%)`; // Interpolated color between red and yellow
+  } else if (normalizedValue <= thresholdGreen) {
+    // Interpolate between yellow and green
+    const interpolatedHue = (normalizedValue - thresholdYellow) / (thresholdGreen - thresholdYellow) * (hueGreen - hueYellow) + hueYellow;
+    return `hsl(${interpolatedHue}, 100%, 50%)`; // Interpolated color between yellow and green
+  } else {
+    return `hsl(${hueGreen}, 100%, 50%)`; // Green color
+  }
+}
+
+// Function to initialize and create the FaceLandmarker
+async function createFaceLandmarker() {
+  const filesetResolver = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm");
+  faceLandmarker = await FaceLandmarker.createFromOptions(filesetResolver, {
+    baseOptions: {
+      modelAssetPath: `https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task`,
+      delegate: "GPU"
+    },
+    outputFaceBlendshapes: true,
+    runningMode,
+    numFaces: 1
+  });
+}
+createFaceLandmarker();
+
+const video = document.getElementById("webcam");
+const canvasElement = document.getElementById("output_canvas");
+const canvasCtx = canvasElement.getContext("2d");
+
+function hasGetUserMedia() {
+  return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+}
+
+if (hasGetUserMedia()) {
+  enableWebcamButton = document.getElementById("webcamButton");
+  enableWebcamButton.addEventListener("click", enableCam);
+} else {
+  console.warn("getUserMedia() is not supported by your browser");
+}
+
+function enableCam(event) {
+  if (!faceLandmarker) {
+    console.log("Wait! faceLandmarker not loaded yet.");
+    return;
+  }
+  if (webcamRunning === true) {
+    webcamRunning = false;
+    enableWebcamButton.innerText = "Start Tracking";
+    video.srcObject.getTracks().forEach(track => track.stop());
+  } else {
+    webcamRunning = true;
+    enableWebcamButton.innerText = "Stop Tracking";
+    const constraints = {
+      video: true
+    };
+    navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+      video.srcObject = stream;
+      video.addEventListener("loadeddata", predictWebcam);
+    });
+  }
+}
+
+let lastVideoTime = -1;
+let results = undefined;
+const drawingUtils = new DrawingUtils(canvasCtx);
+
+async function predictWebcam() {
+  const radio = video.videoHeight / video.videoWidth;
+  video.style.width = videoWidth + "px";
+  video.style.height = videoWidth * radio + "px";
+  canvasElement.style.width = videoWidth + "px";
+  canvasElement.style.height = videoWidth * radio + "px";
+  canvasElement.width = video.videoWidth;
+  canvasElement.height = video.videoHeight;
+
+  if (runningMode === "IMAGE") {
+    runningMode = "VIDEO";
+    await faceLandmarker.setOptions({ runningMode: runningMode });
+  }
+
+  let startTimeMs = performance.now();
+  if (lastVideoTime !== video.currentTime) {
+    lastVideoTime = video.currentTime;
+    results = await faceLandmarker.detectForVideo(video, startTimeMs);
+  }
+
+  if (results.faceLandmarks) {
+    for (const landmarks of results.faceLandmarks) {
+      drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_TESSELATION, { color: "#C0C0C070", lineWidth: 1 });
+      drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_RIGHT_EYE, { color: "#ff3333" });
+      drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_RIGHT_EYEBROW, { color: "#ff3333" });
+      drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_LEFT_EYE, { color: "#ff3333" });
+      drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_LEFT_EYEBROW, { color: "#ff3333" });
+      drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_FACE_OVAL, { color: "#E0E0E0" });
+      drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_LIPS, { color: "#E0E0E0" });
+      drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_RIGHT_IRIS, { color: "#ff3333" });
+      drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_LEFT_IRIS, { color: "#ff3333" });
+    }
+  }
+  drawBlendShapes(videoBlendShapes, results.faceBlendshapes);
+
+  if (webcamRunning === true) {
+    window.requestAnimationFrame(predictWebcam);
+  }
+}
+
+setInterval(() => {
+  if (results && results.faceBlendshapes) {
+    // cxsa
+
+    // Calculate average score for left and right eye blinks
+    // for (const shape of results.faceBlendshapes[0].categories) {
+    //   if (shape.categoryName === "eyeBlinkLeft") {
+    //     leftEyeScore += shape.score;
+    //   } else if (shape.categoryName === "eyeBlinkRight") {
+    //     rightEyeScore += shape.score;
+    //   }
+    // }
+
+    // const leftEyeCount = results.faceBlendshapes[0].categories.filter(shape => shape.categoryName === "eyeBlinkLeft").length;
+    // const rightEyeCount = results.faceBlendshapes[0].categories.filter(shape => shape.categoryName === "eyeBlinkRight").length;
+
+    // leftEyeScore /= leftEyeCount || 1;
+    // rightEyeScore /= rightEyeCount || 1;
+
+    // Update counters
+    // if (leftEyeScore >= 0.3) {
+    //   leftEyeClosed++;
+    // } else {
+    //   leftEyeOpen++;
+    // }
+
+    // if (rightEyeScore >= 0.3) {
+    //   rightEyeClosed++;
+    // } else {
+    //   rightEyeOpen++;
+    // }
+
+    const record = {
+      leftEye: { open: leftEyeOpen, closed: leftEyeClosed },
+      rightEye: { open: rightEyeOpen, closed: rightEyeClosed },
+      timestamp: new Date().toISOString()
+    };
+
+    eyeBlinkData.push(record);
+
+    // Store data
+    localStorage.setItem('eyeBlinkData', JSON.stringify(eyeBlinkData));
+
+    // Update chart
+    eyeBlinkChart.data.labels.push(new Date(record.timestamp));
+    eyeBlinkChart.data.datasets[0].data.push(record.leftEye.closed / (record.leftEye.closed + record.leftEye.open));
+    eyeBlinkChart.data.datasets[1].data.push(record.rightEye.closed / (record.rightEye.closed + record.rightEye.open));
+    eyeBlinkChart.update();
+
+    // Reset counters
+    leftEyeOpen = 0;
+    leftEyeClosed = 0;
+    rightEyeOpen = 0;
+    rightEyeClosed = 0;
+  }
+}, 10000); // Run every 10 seconds
+
+function drawBlendShapes(el, blendShapes) {
+  if (!blendShapes.length) {
+    return;
+  }
+  let htmlMaker = "";
+  blendShapes[0].categories.map((shape) => {
+    if (shape.categoryName === "eyeBlinkLeft" || shape.categoryName === "eyeBlinkRight") {
+      if (shape.categoryName === "eyeBlinkLeft") {
+        if (shape.score >= 0.4) {
+          leftEyeClosed++;
+        } else {
+          leftEyeOpen++;
+        }
+
+        htmlMaker += `
+          <li class="blend-shapes-item">
+            <span class="blend-shapes-label">Left Eye</span>
+            <span class="blend-shapes-value" style="width: calc(${+shape.score * 100}% - 120px)">${(+shape.score).toFixed(4)}</span>
+          </li>
+        `;
+      } else if (shape.categoryName === "eyeBlinkRight") {
+        if (shape.score >= 0.4) {
+          rightEyeClosed++;
+        } else {
+          rightEyeOpen++;
+        }
+
+        htmlMaker += `
+          <li class="blend-shapes-item">
+            <span class="blend-shapes-label">Right Eye</span>
+            <span class="blend-shapes-value" style="width: calc(${+shape.score * 100}% - 120px)">${(+shape.score).toFixed(4)}</span>
+          </li>
+        `;
+      }
+    }
+  });
+  el.innerHTML = htmlMaker;
+}

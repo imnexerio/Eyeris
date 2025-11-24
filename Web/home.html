@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/png" href="icon.svg">
+  <meta charset="utf-8">
+  <meta http-equiv="Cache-control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <title>Eyeris</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3"></script>
+  <script src="script.js" type="module"></script>
+
+  <!-- Include Moment.js -->
+  <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/min/moment.min.js"></script>
+  <!-- Include Chart.js Moment Adapter -->
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0/dist/chartjs-adapter-moment.min.js"></script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+        <h2><img src="icon.svg" alt="Eyeris Icon" style="width: 40%; height: 50%;"></h2>
+        <ul>
+            <li><a href="home.html">Home</a></li>
+            <li><a href="downloads.html">Downloads</a></li>
+            <li><a href="troubleshooting.html">Troubleshooting</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </div>
+    <section id="hero" class="hero">
+        <div class="hero-text">
+            <h1>Welcome to Eyeris</h1>
+            <p>Real-time Eye detection using the latest AI technology.</p>
+        </div>
+    </section>
+
+    <section id="facelandmark">
+      <div id="liveView" class="videoView">
+        <button id="webcamButton" class="mdc-button mdc-button--raised">
+          <span class="mdc-button__ripple"></span>
+          <span class="mdc-button__label">Start Tracking</span>
+        </button>
+    
+        <div style="position: sticky; top: 0;">
+          <video id="webcam" style="position: absolute" autoplay playsinline></video>
+          <canvas class="output_canvas" id="output_canvas" style="position: relative;"></canvas>
+        </div>
+    
+        <ul class="blend-shapes-list" id="video-blend-shapes"></ul>
+      </div>
+    
+      <div id="analysis" class="analysis_div">
+        <canvas id="eyeBlinkChart" width="400" height="200"></canvas>
+      </div>
+    </section>
+  </div>
+  
+  <section id="about" class="about">
+    <h2>About</h2>
+    <p>This Eyeris application uses advanced AI models to detect and visualize facial landmarks in real-time. It leverages the MediaPipe FaceLandmarker task to provide accurate and efficient face landmark detection. Whether you are a developer looking to integrate facial recognition into your app or a user curious about how AI sees your face, this tool offers a glimpse into the future of interactive computer vision.</p>
+  </section>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>

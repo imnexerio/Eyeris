@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<svg width="108" height="108" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+ <desc>Created with Fabric.js 3.6.6</desc>
+
+ <g class="layer">
+  <title>Layer 1</title>
+  <g id="svg_1" transform="matrix(0.12 0 0 0.12 53.7 53.7)">
+   <g id="svg_2">
+    <g id="svg_3" transform="matrix(33.33 0 0 33.33 0 0)">
+     <path d="m9,4.45962c0.91153,-0.28994 1.9104,-0.45962 3,-0.45962c4.1819,0 7.028,2.49956 8.7251,4.70433c0.8499,1.1042 1.2749,1.65627 1.2749,3.29567c0,1.6394 -0.425,2.1915 -1.2749,3.2957c-1.6971,2.2047 -4.5432,4.7043 -8.7251,4.7043c-4.18189,0 -7.02804,-2.4996 -8.72511,-4.7043c-0.84993,-1.1042 -1.27489,-1.6563 -1.27489,-3.2957c0,-1.6394 0.42496,-2.19147 1.27489,-3.29567c0.48123,-0.62519 1.05484,-1.27408 1.72511,-1.88296" fill="#fffcfc" fill-rule="nonzero" id="svg_4" stroke="#000000" stroke-dashoffset="0" stroke-linecap="round" stroke-miterlimit="4" stroke-width="1.5" transform=" translate(-12, -12)"/>
+    </g>
+    <g id="svg_5" transform="matrix(33.33 0 0 33.33 0 0)">
+     <path d="m15,12c0,1.6569 -1.3431,3 -3,3c-1.6569,0 -3,-1.3431 -3,-3c0,-1.6569 1.3431,-3 3,-3c1.6569,0 3,1.3431 3,3z" fill="#fffcfc" fill-rule="nonzero" id="svg_6" stroke="#000000" stroke-dashoffset="0" stroke-miterlimit="4" stroke-width="1.5" transform=" translate(-12, -12)"/>
+    </g>
+   </g>
+  </g>
+ </g>
+</svg>
