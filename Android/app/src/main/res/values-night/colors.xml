@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+        <!-- Dark Theme Colors -->
+        <color name="light_primary">#BB86FC</color>
+        <color name="light_primary_variant">#3700B3</color>
+        <color name="light_on_primary">#000000</color>
+        <color name="light_secondary">#03DAC6</color>
+        <color name="light_secondary_variant">#018786</color>
+        <color name="light_on_secondary">#FFFFFf</color>
+
+        <!-- Ocean Breeze Colors -->
+        <color name="ocean_breeze_primary">#004D40</color>
+        <color name="ocean_breeze_primary_variant">#00251A</color>
+        <color name="ocean_breeze_on_primary">#FFFFFF</color>
+        <color name="ocean_breeze_secondary">#00796B</color>
+        <color name="ocean_breeze_secondary_variant">#004D40</color>
+        <color name="ocean_breeze_on_secondary">#FFFFFF</color>
+
+        <!-- Sunset Glow Colors -->
+        <color name="sunset_glow_primary">#BF360C</color>
+        <color name="sunset_glow_primary_variant">#870000</color>
+        <color name="sunset_glow_on_primary">#FFFFFF</color>
+        <color name="sunset_glow_secondary">#FF5722</color>
+        <color name="sunset_glow_secondary_variant">#BF360C</color>
+        <color name="sunset_glow_on_secondary">#FFFFFF</color>
+
+        <!-- Forest Whisper Colors -->
+        <color name="forest_whisper_primary">#1B5E20</color>
+        <color name="forest_whisper_primary_variant">#004D40</color>
+        <color name="forest_whisper_on_primary">#FFFFFF</color>
+        <color name="forest_whisper_secondary">#388E3C</color>
+        <color name="forest_whisper_secondary_variant">#1B5E20</color>
+        <color name="forest_whisper_on_secondary">#FFFFFF</color>
+
+        <!-- Royal Elegance Colors -->
+        <color name="royal_elegance_primary">#311B92</color>
+        <color name="royal_elegance_primary_variant">#000063</color>
+        <color name="royal_elegance_on_primary">#FFFFFF</color>
+        <color name="royal_elegance_secondary">#673AB7</color>
+        <color name="royal_elegance_secondary_variant">#311B92</color>
+        <color name="royal_elegance_on_secondary">#FFFFFF</color>
+
+        <!-- Urban Night Colors -->
+        <color name="urban_night_primary">#000000</color>
+        <color name="urban_night_primary_variant">#1C1C1C</color>
+        <color name="urban_night_on_primary">#FFFFFF</color>
+        <color name="urban_night_secondary">#424242</color>
+        <color name="urban_night_secondary_variant">#212121</color>
+        <color name="urban_night_on_secondary">#FFFFFF</color>
+
+
+        <color name="blue_sky_primary">#0D47A1</color>
+        <color name="blue_sky_primary_variant">#002171</color>
+        <color name="blue_sky_on_primary">#FFFFFF</color>
+        <color name="blue_sky_secondary">#1976D2</color>
+        <color name="blue_sky_secondary_variant">#0D47A1</color>
+        <color name="blue_sky_on_secondary">#FFFFFF</color>
+
+
+        <color name="red_blaze_primary">#B71C1C</color>
+        <color name="red_blaze_primary_variant">#7F0000</color>
+        <color name="red_blaze_on_primary">#FFFFFF</color>
+        <color name="red_blaze_secondary">#D32F2F</color>
+        <color name="red_blaze_secondary_variant">#B71C1C</color>
+        <color name="red_blaze_on_secondary">#FFFFFF</color>
+
+        <color name="orange_sunset_primary">#E65100</color>
+        <color name="orange_sunset_primary_variant">#BF360C</color>
+        <color name="orange_sunset_on_primary">#FFFFFF</color>
+        <color name="orange_sunset_secondary">#FB8C00</color>
+        <color name="orange_sunset_secondary_variant">#E65100</color>
+        <color name="orange_sunset_on_secondary">#FFFFFF</color>
+
+        <color name="green_meadow_primary">#1B5E20</color>
+        <color name="green_meadow_primary_variant">#004D40</color>
+        <color name="green_meadow_on_primary">#FFFFFF</color>
+        <color name="green_meadow_secondary">#388E3C</color>
+        <color name="green_meadow_secondary_variant">#1B5E20</color>
+        <color name="green_meadow_on_secondary">#FFFFFF</color>
+
+
+        <color name="purple_twilight_primary">#4A148C</color>
+        <color name="purple_twilight_primary_variant">#12005E</color>
+        <color name="purple_twilight_on_primary">#FFFFFF</color>
+        <color name="purple_twilight_secondary">#7B1FA2</color>
+        <color name="purple_twilight_secondary_variant">#4A148C</color>
+        <color name="purple_twilight_on_secondary">#FFFFFF</color>
+
+
+        <color name="yellow_sunshine_primary">#F57F17</color>
+        <color name="yellow_sunshine_primary_variant">#FF6F00</color>
+        <color name="yellow_sunshine_on_primary">#FFFFFF</color>
+        <color name="yellow_sunshine_secondary">#FBC02D</color>
+        <color name="yellow_sunshine_secondary_variant">#F57F17</color>
+        <color name="yellow_sunshine_on_secondary">#FFFFFF</color>
+
+        <color name="pink_blossom_primary">#880E4F</color>
+        <color name="pink_blossom_primary_variant">#560027</color>
+        <color name="pink_blossom_on_primary">#FFFFFF</color>
+        <color name="pink_blossom_secondary">#C2185B</color>
+        <color name="pink_blossom_secondary_variant">#880E4F</color>
+        <color name="pink_blossom_on_secondary">#FFFFFF</color>
+
+
+        <!-- Greyscale Colors -->
+        <color name="greyscale_primary">#9E9E9E</color>
+        <color name="greyscale_primary_variant">#757575</color>
+        <color name="greyscale_on_primary">#FFFFFF</color>
+        <color name="greyscale_secondary">#BDBDBD</color>
+        <color name="greyscale_secondary_variant">#616161</color>
+        <color name="greyscale_on_secondary">#000000</color>
+
+
+        <color name="camera_black">#FFFFFFFF</color>
+    <color name="camera_white">#1C1C1C</color>
+        <color name="tem">#424242</color>
+</resources>
+
+

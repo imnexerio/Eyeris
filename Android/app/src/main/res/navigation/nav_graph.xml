@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/permissions_fragment">
+
+    <fragment
+        android:id="@+id/permissions_fragment"
+        android:name="com.imnexerio.eyeris.fragments.PermissionsFragment"
+        android:label="PermissionsFragment">
+        <action
+            android:id="@+id/action_permissions_fragment_to_mainActivity"
+            app:destination="@id/mainActivity" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/camera_fragment"
+        android:name="com.imnexerio.eyeris.fragments.CameraFragment"
+        android:label="CameraFragment"/>
+
+    <fragment
+        android:id="@+id/Analytics_fragment"
+        android:name="com.imnexerio.eyeris.fragments.AnalyticsFragment"
+        android:label="AnalyticsFragment"/>
+
+    <fragment
+        android:id="@+id/Exercises_fragment"
+        android:name="com.imnexerio.eyeris.fragments.ExercisesFragment"
+        android:label="ExercisesFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/settings_fragment"
+        android:name="com.imnexerio.eyeris.fragments.SettingsFragment"
+        android:label="SettingsFragment">
+    </fragment>
+    <activity
+        android:id="@+id/mainActivity"
+        android:name="com.imnexerio.eyeris.MainActivity"
+        android:label="MainActivity" />
+    <activity
+        android:id="@+id/splashScreen"
+        android:name="com.imnexerio.eyeris.SplashScreen"
+        android:label="fragment_splash"
+        tools:layout="@layout/fragment_splash" />
+
+</navigation>
