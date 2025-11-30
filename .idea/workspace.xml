@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e0b1eea1-978a-4cbb-80ee-694958d9bf11" name="Changes" comment="Crosspage working" />
+    <list default="true" id="e0b1eea1-978a-4cbb-80ee-694958d9bf11" name="Changes" comment="Crosspage working v22" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -55,13 +55,22 @@
       <option name="project" value="LOCAL" />
       <updated>1764513428830</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Crosspage working v22">
+      <option name="closed" value="true" />
+      <created>1764516154889</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1764516154889</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Tauri background" />
     <MESSAGE value="Tauri CRASING V1" />
     <MESSAGE value="Crosspage working" />
-    <option name="LAST_COMMIT_MESSAGE" value="Crosspage working" />
+    <MESSAGE value="Crosspage working v22" />
+    <option name="LAST_COMMIT_MESSAGE" value="Crosspage working v22" />
   </component>
 </project>
