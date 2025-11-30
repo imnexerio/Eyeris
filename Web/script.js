@@ -1,5 +1,4 @@
-import vision from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3";
-const { FaceLandmarker, FilesetResolver, DrawingUtils } = vision;
+import { FaceLandmarker, FilesetResolver, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18";
 
 const videoBlendShapes = document.getElementById("video-blend-shapes");
 let faceLandmarker;
@@ -12,6 +11,60 @@ let leftEyeOpen = 0;
 let leftEyeClosed = 0;
 let rightEyeOpen = 0;
 let rightEyeClosed = 0;
+
+// Background processing variables
+let processingInterval = null;
+let isPageVisible = true;
+const FRAME_INTERVAL = 16; // ~60fps - full speed in background
+
+// Audio context for preventing browser throttling in background
+let audioContext = null;
+let silentAudioNode = null;
+
+// Create silent audio context to keep browser awake
+function createKeepAliveAudio() {
+  if (audioContext) return;
+  
+  try {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    
+    // Create a silent oscillator
+    silentAudioNode = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    // Set gain to 0 (completely silent)
+    gainNode.gain.value = 0;
+    
+    // Connect oscillator -> gain -> destination
+    silentAudioNode.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    // Start the silent oscillator
+    silentAudioNode.start();
+    
+    console.log("Keep-alive audio started for background processing");
+  } catch (e) {
+    console.warn("Could not create keep-alive audio context:", e);
+  }
+}
+
+// Clean up audio context
+function destroyKeepAliveAudio() {
+  if (silentAudioNode) {
+    try {
+      silentAudioNode.stop();
+      silentAudioNode.disconnect();
+    } catch (e) {}
+    silentAudioNode = null;
+  }
+  if (audioContext) {
+    try {
+      audioContext.close();
+    } catch (e) {}
+    audioContext = null;
+  }
+  console.log("Keep-alive audio stopped");
+}
 
 // Function to retrieve and parse stored data
 function getStoredEyeBlinkData() {
@@ -104,7 +157,7 @@ function getColorBasedOnRatio(value) {
 
 // Function to initialize and create the FaceLandmarker
 async function createFaceLandmarker() {
-  const filesetResolver = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm");
+  const filesetResolver = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/wasm");
   faceLandmarker = await FaceLandmarker.createFromOptions(filesetResolver, {
     baseOptions: {
       modelAssetPath: `https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task`,
@@ -140,16 +193,29 @@ function enableCam(event) {
   if (webcamRunning === true) {
     webcamRunning = false;
     enableWebcamButton.innerText = "Start Tracking";
+    stopBackgroundProcessing();
+    destroyKeepAliveAudio();
     video.srcObject.getTracks().forEach(track => track.stop());
   } else {
     webcamRunning = true;
     enableWebcamButton.innerText = "Stop Tracking";
+    
+    // Start keep-alive audio to prevent browser throttling
+    createKeepAliveAudio();
+    
     const constraints = {
       video: true
     };
     navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
       video.srcObject = stream;
-      video.addEventListener("loadeddata", predictWebcam);
+      video.addEventListener("loadeddata", () => {
+        // Start with appropriate method based on visibility
+        if (document.hidden) {
+          startBackgroundProcessing();
+        } else {
+          predictWebcam();
+        }
+      });
     });
   }
 }
@@ -158,15 +224,41 @@ let lastVideoTime = -1;
 let results = undefined;
 const drawingUtils = new DrawingUtils(canvasCtx);
 
-async function predictWebcam() {
-  const radio = video.videoHeight / video.videoWidth;
-  video.style.width = videoWidth + "px";
-  video.style.height = videoWidth * radio + "px";
-  canvasElement.style.width = videoWidth + "px";
-  canvasElement.style.height = videoWidth * radio + "px";
-  canvasElement.width = video.videoWidth;
-  canvasElement.height = video.videoHeight;
+// Handle page visibility changes to keep tracking in background
+document.addEventListener("visibilitychange", () => {
+  isPageVisible = !document.hidden;
+  if (webcamRunning) {
+    if (document.hidden) {
+      // Tab is hidden - switch to setInterval for background processing
+      startBackgroundProcessing();
+    } else {
+      // Tab is visible - switch back to requestAnimationFrame
+      stopBackgroundProcessing();
+      predictWebcam();
+    }
+  }
+});
 
+function startBackgroundProcessing() {
+  if (processingInterval) return;
+  processingInterval = setInterval(() => {
+    if (webcamRunning) {
+      processFrame();
+    }
+  }, FRAME_INTERVAL);
+}
+
+function stopBackgroundProcessing() {
+  if (processingInterval) {
+    clearInterval(processingInterval);
+    processingInterval = null;
+  }
+}
+
+// Core frame processing logic (shared between foreground and background)
+async function processFrame() {
+  if (!faceLandmarker || !webcamRunning) return;
+  
   if (runningMode === "IMAGE") {
     runningMode = "VIDEO";
     await faceLandmarker.setOptions({ runningMode: runningMode });
@@ -178,22 +270,96 @@ async function predictWebcam() {
     results = await faceLandmarker.detectForVideo(video, startTimeMs);
   }
 
-  if (results.faceLandmarks) {
-    for (const landmarks of results.faceLandmarks) {
-      drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_TESSELATION, { color: "#C0C0C070", lineWidth: 1 });
-      drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_RIGHT_EYE, { color: "#ff3333" });
-      drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_RIGHT_EYEBROW, { color: "#ff3333" });
-      drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_LEFT_EYE, { color: "#ff3333" });
-      drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_LEFT_EYEBROW, { color: "#ff3333" });
-      drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_FACE_OVAL, { color: "#E0E0E0" });
-      drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_LIPS, { color: "#E0E0E0" });
-      drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_RIGHT_IRIS, { color: "#ff3333" });
-      drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_LEFT_IRIS, { color: "#ff3333" });
+  // Only draw when page is visible (skip all rendering in background)
+  if (isPageVisible) {
+    // Set canvas dimensions
+    const radio = video.videoHeight / video.videoWidth;
+    video.style.width = videoWidth + "px";
+    video.style.height = videoWidth * radio + "px";
+    canvasElement.style.width = videoWidth + "px";
+    canvasElement.style.height = videoWidth * radio + "px";
+    canvasElement.width = video.videoWidth;
+    canvasElement.height = video.videoHeight;
+    
+    if (results && results.faceLandmarks) {
+      for (const landmarks of results.faceLandmarks) {
+        drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_TESSELATION, { color: "#C0C0C070", lineWidth: 1 });
+        drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_RIGHT_EYE, { color: "#ff3333" });
+        drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_RIGHT_EYEBROW, { color: "#ff3333" });
+        drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_LEFT_EYE, { color: "#ff3333" });
+        drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_LEFT_EYEBROW, { color: "#ff3333" });
+        drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_FACE_OVAL, { color: "#E0E0E0" });
+        drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_LIPS, { color: "#E0E0E0" });
+        drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_RIGHT_IRIS, { color: "#ff3333" });
+        drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_LEFT_IRIS, { color: "#ff3333" });
+      }
+    }
+    
+    // Only update blend shapes UI when visible
+    if (results && results.faceBlendshapes) {
+      updateBlendShapesUI(videoBlendShapes, results.faceBlendshapes);
     }
   }
-  drawBlendShapes(videoBlendShapes, results.faceBlendshapes);
+  
+  // ALWAYS process blink tracking (even in background)
+  if (results && results.faceBlendshapes) {
+    processBlinkData(results.faceBlendshapes);
+  }
+}
 
-  if (webcamRunning === true) {
+// Separate function for processing blink data (runs in background)
+function processBlinkData(blendShapes) {
+  if (!blendShapes.length) return;
+  
+  blendShapes[0].categories.forEach((shape) => {
+    if (shape.categoryName === "eyeBlinkLeft") {
+      if (shape.score >= 0.4) {
+        leftEyeClosed++;
+      } else {
+        leftEyeOpen++;
+      }
+    } else if (shape.categoryName === "eyeBlinkRight") {
+      if (shape.score >= 0.4) {
+        rightEyeClosed++;
+      } else {
+        rightEyeOpen++;
+      }
+    }
+  });
+}
+
+// Separate function for updating UI (only when visible)
+function updateBlendShapesUI(el, blendShapes) {
+  if (!blendShapes.length) return;
+  
+  let htmlMaker = "";
+  blendShapes[0].categories.forEach((shape) => {
+    if (shape.categoryName === "eyeBlinkLeft") {
+      htmlMaker += `
+        <li class="blend-shapes-item">
+          <span class="blend-shapes-label">Left Eye</span>
+          <span class="blend-shapes-value" style="width: calc(${+shape.score * 100}% - 120px)">${(+shape.score).toFixed(4)}</span>
+        </li>
+      `;
+    } else if (shape.categoryName === "eyeBlinkRight") {
+      htmlMaker += `
+        <li class="blend-shapes-item">
+          <span class="blend-shapes-label">Right Eye</span>
+          <span class="blend-shapes-value" style="width: calc(${+shape.score * 100}% - 120px)">${(+shape.score).toFixed(4)}</span>
+        </li>
+      `;
+    }
+  });
+  el.innerHTML = htmlMaker;
+}
+
+async function predictWebcam() {
+  if (!webcamRunning) return;
+  
+  await processFrame();
+
+  // Only use requestAnimationFrame when page is visible
+  if (webcamRunning && isPageVisible) {
     window.requestAnimationFrame(predictWebcam);
   }
 }
@@ -255,41 +421,6 @@ setInterval(() => {
   }
 }, 10000); // Run every 10 seconds
 
-function drawBlendShapes(el, blendShapes) {
-  if (!blendShapes.length) {
-    return;
-  }
-  let htmlMaker = "";
-  blendShapes[0].categories.map((shape) => {
-    if (shape.categoryName === "eyeBlinkLeft" || shape.categoryName === "eyeBlinkRight") {
-      if (shape.categoryName === "eyeBlinkLeft") {
-        if (shape.score >= 0.4) {
-          leftEyeClosed++;
-        } else {
-          leftEyeOpen++;
-        }
-
-        htmlMaker += `
-          <li class="blend-shapes-item">
-            <span class="blend-shapes-label">Left Eye</span>
-            <span class="blend-shapes-value" style="width: calc(${+shape.score * 100}% - 120px)">${(+shape.score).toFixed(4)}</span>
-          </li>
-        `;
-      } else if (shape.categoryName === "eyeBlinkRight") {
-        if (shape.score >= 0.4) {
-          rightEyeClosed++;
-        } else {
-          rightEyeOpen++;
-        }
-
-        htmlMaker += `
-          <li class="blend-shapes-item">
-            <span class="blend-shapes-label">Right Eye</span>
-            <span class="blend-shapes-value" style="width: calc(${+shape.score * 100}% - 120px)">${(+shape.score).toFixed(4)}</span>
-          </li>
-        `;
-      }
-    }
-  });
-  el.innerHTML = htmlMaker;
-}
+// Legacy function removed - functionality split into:
+// - processBlinkData() for tracking (runs always)
+// - updateBlendShapesUI() for display (runs when visible)
