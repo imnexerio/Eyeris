@@ -523,18 +523,33 @@ main.container {
   transform: translateY(0);
 }
 
-/* Video */
+/* Video Container */
+.video-container {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 video {
   display: block;
   transform: rotateY(180deg);
-  margin: 0 auto;
   border-radius: 10px;
   max-width: 100%;
+  width: 100%;
+  height: auto;
 }
 
 .output_canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
   transform: rotateY(180deg);
   border-radius: 10px;
+  pointer-events: none;
 }
 
 /* Blend Shapes */

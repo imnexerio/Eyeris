@@ -5,7 +5,6 @@ let faceLandmarker;
 let runningMode = "IMAGE";
 let enableWebcamButton;
 let webcamRunning = false;
-const videoWidth = 480;
 
 let leftEyeOpen = 0;
 let leftEyeClosed = 0;
@@ -22,7 +21,7 @@ let lastFpsUpdate = 0;
 // Eye health tracking
 let blinkCount = 0;
 let lastBlinkState = { left: false, right: false };
-let blinkRateHistory = [];
+let blinkRateHistory = []; // Will store {rate, label} objects
 let breaksTaken = 0;
 let lastBreakTime = null;
 const BREAK_INTERVAL = 20 * 60 * 1000; // 20 minutes in ms
@@ -204,17 +203,23 @@ const eyeBlinkChart = new Chart(ctx, {
       label: 'Blink Rate (per min)',
       data: [],
       borderColor: '#10b981',
-      backgroundColor: 'rgba(16, 185, 129, 0.1)',
+      backgroundColor: 'rgba(16, 185, 129, 0.15)',
       borderWidth: 2,
       tension: 0.4,
       fill: true,
-      pointRadius: 3,
+      pointRadius: 4,
       pointBackgroundColor: '#10b981',
+      pointBorderColor: '#10b981',
+      pointHoverRadius: 6,
     }]
   },
   options: {
     responsive: true,
     maintainAspectRatio: false,
+    interaction: {
+      intersect: false,
+      mode: 'index'
+    },
     plugins: {
       legend: { display: false },
       tooltip: {
@@ -223,29 +228,31 @@ const eyeBlinkChart = new Chart(ctx, {
         bodyColor: '#a1a1aa',
         borderColor: 'rgba(255,255,255,0.1)',
         borderWidth: 1,
+        padding: 10,
+        displayColors: false,
         callbacks: {
+          title: () => 'Blink Rate',
           label: (ctx) => `${ctx.parsed.y} blinks/min`
-        }
-      },
-      annotation: {
-        annotations: {
-          healthyZone: {
-            type: 'box',
-            yMin: HEALTHY_BLINK_RATE_MIN,
-            yMax: HEALTHY_BLINK_RATE_MAX,
-            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-            borderWidth: 0
-          }
         }
       }
     },
     scales: {
-      x: { display: false },
+      x: { 
+        display: true,
+        grid: { display: false },
+        ticks: { 
+          display: false
+        }
+      },
       y: { 
         beginAtZero: true,
-        max: 40,
-        grid: { color: 'rgba(255,255,255,0.04)' },
-        ticks: { callback: v => v + '/min' }
+        suggestedMax: 30,
+        grid: { color: 'rgba(255,255,255,0.06)' },
+        ticks: { 
+          stepSize: 10,
+          callback: v => v,
+          font: { size: 10 }
+        }
       }
     }
   }
@@ -500,13 +507,21 @@ async function processFrame() {
   }
 
   if (isPageVisible) {
-    const radio = video.videoHeight / video.videoWidth;
-    video.style.width = videoWidth + "px";
-    video.style.height = videoWidth * radio + "px";
-    canvasElement.style.width = videoWidth + "px";
-    canvasElement.style.height = videoWidth * radio + "px";
+    // Get video dimensions
+    const videoRect = video.getBoundingClientRect();
+    const displayWidth = videoRect.width;
+    const displayHeight = videoRect.height;
+    
+    // Set canvas to match video display size exactly
+    canvasElement.style.width = displayWidth + "px";
+    canvasElement.style.height = displayHeight + "px";
+    
+    // Set canvas internal resolution to match video source
     canvasElement.width = video.videoWidth;
     canvasElement.height = video.videoHeight;
+    
+    // Clear and draw
+    canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
     
     if (results && results.faceLandmarks) {
       for (const landmarks of results.faceLandmarks) {
@@ -631,22 +646,30 @@ async function predictWebcam() {
   }
 }
 
-// Update stats every 10 seconds
+// Update stats every 5 seconds for more responsive chart
+let statsUpdateCount = 0;
 setInterval(() => {
   if (!webcamRunning || !sessionStartTime) return;
+  
+  statsUpdateCount++;
   
   // Calculate blink rate (blinks per minute)
   const sessionMins = (Date.now() - sessionStartTime) / 60000;
   const blinkRate = sessionMins > 0 ? Math.round(blinkCount / sessionMins) : 0;
   
   document.getElementById('blinkRate').textContent = blinkRate;
-  blinkRateHistory.push(blinkRate);
-  if (blinkRateHistory.length > 12) blinkRateHistory.shift();
+  
+  // Add data point with timestamp label
+  const now = new Date();
+  const timeLabel = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+  
+  blinkRateHistory.push({ rate: blinkRate, label: timeLabel });
+  if (blinkRateHistory.length > 20) blinkRateHistory.shift();
   
   // Update blink rate chart
-  eyeBlinkChart.data.labels = blinkRateHistory.map((_, i) => i);
-  eyeBlinkChart.data.datasets[0].data = blinkRateHistory;
-  eyeBlinkChart.update();
+  eyeBlinkChart.data.labels = blinkRateHistory.map(d => d.label);
+  eyeBlinkChart.data.datasets[0].data = blinkRateHistory.map(d => d.rate);
+  eyeBlinkChart.update('none');
   
   // Calculate and update strain level
   currentStrainLevel = calculateStrainLevel(blinkRate);
@@ -654,10 +677,10 @@ setInterval(() => {
   
   // Update strain chart
   strainHistory.push(strainScore);
-  if (strainHistory.length > 12) strainHistory.shift();
+  if (strainHistory.length > 20) strainHistory.shift();
   fatigueChart.data.labels = strainHistory.map((_, i) => i);
   fatigueChart.data.datasets[0].data = strainHistory;
-  fatigueChart.update();
+  fatigueChart.update('none');
   
   // Update health status based on strain
   if (currentStrainLevel === 'High') {
@@ -669,29 +692,31 @@ setInterval(() => {
   }
   
   // Update blink distribution
-  const totalLeft = eyeBlinkData.reduce((sum, d) => sum + (d.leftEye?.closed || 0), 0) + leftEyeClosed;
-  const totalRight = eyeBlinkData.reduce((sum, d) => sum + (d.rightEye?.closed || 0), 0) + rightEyeClosed;
-  const total = totalLeft + totalRight || 1;
+  const totalLeft = leftEyeClosed + 1;
+  const totalRight = rightEyeClosed + 1;
+  const total = totalLeft + totalRight;
   blinkDistChart.data.datasets[0].data = [
     Math.round((totalLeft / total) * 100),
     Math.round((totalRight / total) * 100)
   ];
-  blinkDistChart.update();
+  blinkDistChart.update('none');
   
-  // Save data
-  const record = {
-    leftEye: { open: leftEyeOpen, closed: leftEyeClosed },
-    rightEye: { open: rightEyeOpen, closed: rightEyeClosed },
-    blinkRate,
-    strainLevel: currentStrainLevel,
-    timestamp: new Date().toISOString()
-  };
-  eyeBlinkData.push(record);
-  localStorage.setItem('eyeBlinkData', JSON.stringify(eyeBlinkData));
-  
-  // Reset counters
-  leftEyeOpen = 0;
-  leftEyeClosed = 0;
-  rightEyeOpen = 0;
-  rightEyeClosed = 0;
-}, 10000);
+  // Save data every 2 updates (10 seconds)
+  if (statsUpdateCount % 2 === 0) {
+    const record = {
+      leftEye: { open: leftEyeOpen, closed: leftEyeClosed },
+      rightEye: { open: rightEyeOpen, closed: rightEyeClosed },
+      blinkRate,
+      strainLevel: currentStrainLevel,
+      timestamp: new Date().toISOString()
+    };
+    eyeBlinkData.push(record);
+    localStorage.setItem('eyeBlinkData', JSON.stringify(eyeBlinkData));
+    
+    // Reset counters
+    leftEyeOpen = 0;
+    leftEyeClosed = 0;
+    rightEyeOpen = 0;
+    rightEyeClosed = 0;
+  }
+}, 5000);
