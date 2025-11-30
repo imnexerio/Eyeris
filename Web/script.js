@@ -4,6 +4,28 @@ import { FaceLandmarker, FilesetResolver, DrawingUtils } from "./lib/mediapipe/v
 const isTauri = window.__TAURI__ !== undefined;
 console.log(`Eyeris running in ${isTauri ? 'Tauri (native)' : 'Web Browser'} mode`);
 
+// Handle external links in Tauri - open in system browser
+if (isTauri) {
+  document.addEventListener('click', async (e) => {
+    const link = e.target.closest('a');
+    if (link) {
+      const href = link.getAttribute('href');
+      // Check if it's an external link (starts with http/https)
+      if (href && (href.startsWith('http://') || href.startsWith('https://'))) {
+        e.preventDefault();
+        try {
+          const { open } = await import('@tauri-apps/plugin-opener');
+          await open(href);
+        } catch (err) {
+          console.error('Failed to open external link:', err);
+          // Fallback: try window.open (may not work in all cases)
+          window.open(href, '_blank');
+        }
+      }
+    }
+  });
+}
+
 // Register Service Worker for offline support (web only)
 if ('serviceWorker' in navigator && !isTauri) {
   window.addEventListener('load', () => {

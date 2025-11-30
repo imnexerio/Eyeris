@@ -8,11 +8,16 @@
     "dev": "tauri dev",
     "build": "tauri build"
   },
-  "keywords": ["eye-health", "blink-detection", "eye-strain"],
+  "keywords": [
+    "eye-health",
+    "blink-detection",
+    "eye-strain"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
     "@tauri-apps/api": "^2.9.1",
-    "@tauri-apps/cli": "^2.9.5"
+    "@tauri-apps/cli": "^2.9.5",
+    "@tauri-apps/plugin-opener": "^2.5.2"
   }
 }

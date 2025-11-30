@@ -1,8 +1,34 @@
 # Eyeris
 
-**Real-time Eye Tracking & Blink Detection Platform**
+**Real-time Eye Health Monitoring & Blink Detection Platform**
 
-Eyeris is a comprehensive, cross-platform eye tracking solution leveraging Google's MediaPipe for real-time facial landmark detection and eye blink analysis. Available on Android, Desktop (Windows/Mac/Linux), and Web platforms.
+Eyeris is a comprehensive, cross-platform eye tracking solution leveraging Google's MediaPipe for real-time facial landmark detection and eye blink analysis. Designed to help reduce eye strain by monitoring blink rates and reminding users to take breaks following the 20-20-20 rule.
+
+[![GitHub Release](https://img.shields.io/github/v/release/imnexerio/Eyeris?style=flat-square)](https://github.com/imnexerio/Eyeris/releases/latest)
+[![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg?style=flat-square)](LICENSE)
+
+## 📥 Downloads
+
+### Desktop (Tauri)
+
+| Platform | Download |
+|----------|----------|
+| **Windows** | [Installer (.exe)](https://github.com/imnexerio/Eyeris/releases/latest/download/Eyeris_1.0.3_x64-setup.exe) · [MSI](https://github.com/imnexerio/Eyeris/releases/latest/download/Eyeris_1.0.3_x64_en-US.msi) |
+| **macOS (Apple Silicon)** | [DMG](https://github.com/imnexerio/Eyeris/releases/latest/download/Eyeris_1.0.3_aarch64.dmg) |
+| **macOS (Intel)** | [DMG](https://github.com/imnexerio/Eyeris/releases/latest/download/Eyeris_1.0.3_x64.dmg) |
+| **Linux** | [.deb](https://github.com/imnexerio/Eyeris/releases/latest/download/eyeris_1.0.3_amd64.deb) · [.rpm](https://github.com/imnexerio/Eyeris/releases/latest/download/eyeris-1.0.3-1.x86_64.rpm) · [AppImage](https://github.com/imnexerio/Eyeris/releases/latest/download/eyeris_1.0.3_amd64.AppImage) |
+
+### Mobile
+
+| Platform | Download |
+|----------|----------|
+| **Android** | [APK](https://github.com/imnexerio/Eyeris/releases/latest/download/Eyeris.apk) |
+
+### Web
+
+No installation required! Visit the [Web App](https://imnexerio.github.io/Eyeris/) directly in your browser.
+
+> 📦 [View all releases](https://github.com/imnexerio/Eyeris/releases)
 
 ## 🌟 Overview
 
@@ -28,7 +54,26 @@ Native Android application with real-time camera processing, analytics, exercise
 - Navigation Components
 - SQLite for local data storage
 
-### Desktop
+### Desktop (Tauri)
+Cross-platform native desktop application built with Tauri v2, offering lightweight performance and modern web-based UI.
+
+**Key Features:**
+- Native performance with minimal resource usage (~10MB app size)
+- Real-time eye blink detection and tracking
+- 20-20-20 rule break reminders for eye health
+- Eye strain level monitoring
+- Interactive Chart.js visualizations
+- Session analytics and history
+- Offline support with bundled MediaPipe model
+
+**Tech Stack:**
+- Tauri v2 (Rust backend)
+- HTML/CSS/JavaScript frontend
+- MediaPipe Vision Tasks
+- Chart.js for data visualization
+- LocalStorage for data persistence
+
+### Desktop (Python - Legacy)
 Cross-platform desktop application with a modern GUI built using CustomTkinter.
 
 **Key Features:**
@@ -101,7 +146,31 @@ cd eyeris/Android
 # Run on device or emulator
 ```
 
-### Desktop
+### Desktop (Tauri) - Recommended
+
+**Prerequisites:**
+- [Node.js](https://nodejs.org/) (v18+)
+- [Rust](https://rustup.rs/) (latest stable)
+- Platform-specific dependencies: [Tauri Prerequisites](https://v2.tauri.app/start/prerequisites/)
+
+**Setup:**
+```bash
+git clone https://github.com/imnexerio/eyeris.git
+cd eyeris/Tauri
+
+# Install dependencies
+npm install
+
+# Run in development mode
+npm run tauri dev
+
+# Build for production
+npm run tauri build
+```
+
+Built executables will be in `src-tauri/target/release/bundle/`.
+
+### Desktop (Python - Legacy)
 
 **Prerequisites:**
 - Python 3.8 or higher
@@ -148,14 +217,17 @@ python -m http.server 8000
 
 ## 📊 Features Comparison
 
-| Feature | Android | Desktop | Web |
-|---------|---------|---------|-----|
+| Feature | Android | Desktop (Tauri) | Web |
+|---------|---------|-----------------|-----|
 | Real-time Detection | ✅ | ✅ | ✅ |
-| Offline Support | ✅ | ✅ | ❌ |
+| Offline Support | ✅ | ✅ | ✅ (after first load) |
+| 20-20-20 Break Reminders | ✅ | ✅ | ✅ |
+| Eye Strain Monitoring | ✅ | ✅ | ✅ |
 | Data Analytics | ✅ | ✅ | ✅ |
-| Customization | ✅ | ✅ | ⚠️ |
+| Native Performance | ✅ | ✅ | ⚠️ |
 | Installation Required | ✅ | ✅ | ❌ |
-| Cross-platform | Android | Win/Mac/Linux | Any Browser |
+| Platforms | Android | Win/Mac/Linux | Any Browser |
+| App Size | ~15MB | ~10MB | N/A |
 
 ## 🛠️ Technology Stack
 
@@ -166,13 +238,14 @@ python -m http.server 8000
 
 **Platform-Specific:**
 - **Android**: Kotlin, AndroidX, Material Design
-- **Desktop**: Python, CustomTkinter, OpenCV, Matplotlib
-- **Web**: JavaScript ES6, Chart.js, HTML5 Canvas
+- **Desktop (Tauri)**: Rust, Tauri v2, HTML/CSS/JS, Chart.js
+- **Desktop (Python)**: Python, CustomTkinter, OpenCV, Matplotlib
+- **Web**: JavaScript ES6, Chart.js, Service Workers
 
 ## 📁 Project Structure
 
 ```
-Eyeris-v1/
+Eyeris/
 ├── Android/           # Native Android application
 │   ├── app/
 │   │   └── src/
@@ -186,22 +259,27 @@ Eyeris-v1/
 │   │           ├── res/          # Resources, layouts, themes
 │   │           └── assets/       # ML model files
 │   └── README.md
-├── Desktop/           # Cross-platform desktop app
+├── Tauri/             # Native desktop app (Recommended)
+│   ├── src-tauri/     # Rust backend
+│   │   ├── src/
+│   │   ├── Cargo.toml
+│   │   └── tauri.conf.json
+│   └── package.json
+├── Desktop/           # Python desktop app (Legacy)
 │   ├── main.py
 │   ├── customtkinter_ui.py
 │   ├── requirements.txt
-│   ├── assets/
-│   │   ├── face_landmarker.task
-│   │   └── your_database.db
-│   └── README.md
-├── Web/              # Browser-based application
-│   ├── home.html
+│   └── assets/
+├── Web/               # Browser-based application
+│   ├── index.html
 │   ├── script.js
-│   ├── worker.js
 │   ├── styles.css
-│   └── contact.html
-├── LICENSE           # AGPL-3.0
-└── README.md         # This file
+│   ├── sw.js          # Service Worker for offline
+│   ├── lib/           # Local libraries (MediaPipe, Chart.js)
+│   └── assets/        # ML model file
+├── .github/workflows/ # CI/CD for automated builds
+├── LICENSE            # AGPL-3.0
+└── README.md          # This file
 ```
 
 ## 🤝 Contributing
@@ -227,16 +305,18 @@ This project is licensed under the **GNU Affero General Public License v3.0 (AGP
 ## 🙏 Acknowledgments
 
 - **MediaPipe** by Google AI - For the powerful face landmarker model
-- **CustomTkinter** - Modern UI framework for Python desktop apps
+- **Tauri** - Lightweight framework for cross-platform desktop apps
 - **Chart.js** - Beautiful JavaScript charting library
+- **CustomTkinter** - Modern UI framework for Python desktop apps
 - All contributors and users of the Eyeris project
 
 ## 📞 Contact & Links
 
-- **Website**: [https://sites.google.com/view/imnexerio-eyeris/home](https://sites.google.com/view/imnexerio-eyeris/home)
-- **GitHub**: [https://github.com/imnexerio/eyeris](https://github.com/imnexerio/eyeris)
+- **Web App**: [https://imnexerio.github.io/Eyeris/](https://imnexerio.github.io/Eyeris/)
+- **GitHub**: [https://github.com/imnexerio/Eyeris](https://github.com/imnexerio/Eyeris)
+- **Releases**: [https://github.com/imnexerio/Eyeris/releases](https://github.com/imnexerio/Eyeris/releases)
 - **MediaPipe Documentation**: [https://ai.google.dev/edge/mediapipe/](https://ai.google.dev/edge/mediapipe/)
 
 ---
 
-**Made with ❤️ for eye health and computer vision innovation**
+**Made with ❤️ for eye health and reducing digital eye strain**
