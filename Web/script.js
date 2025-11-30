@@ -1,5 +1,28 @@
 import { FaceLandmarker, FilesetResolver, DrawingUtils } from "./lib/mediapipe/vision_bundle.mjs";
 
+// Register Service Worker for offline support
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then((registration) => {
+        console.log('Service Worker registered:', registration.scope);
+        
+        // Check for updates
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              console.log('New version available! Refresh to update.');
+            }
+          });
+        });
+      })
+      .catch((error) => {
+        console.log('Service Worker registration failed:', error);
+      });
+  });
+}
+
 const videoBlendShapes = document.getElementById("video-blend-shapes");
 let faceLandmarker;
 let runningMode = "IMAGE";
