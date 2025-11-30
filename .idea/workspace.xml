@@ -4,18 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e0b1eea1-978a-4cbb-80ee-694958d9bf11" name="Changes" comment="Tauri background">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tauri/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Tauri/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tauri/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Tauri/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tauri/src-tauri/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Tauri/src-tauri/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tauri/src-tauri/capabilities/default.json" beforeDir="false" afterPath="$PROJECT_DIR$/Tauri/src-tauri/capabilities/default.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tauri/src-tauri/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/Tauri/src-tauri/src/lib.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tauri/src-tauri/tauri.conf.json" beforeDir="false" afterPath="$PROJECT_DIR$/Tauri/src-tauri/tauri.conf.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Web/downloads.html" beforeDir="false" afterPath="$PROJECT_DIR$/Web/downloads.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Web/script.js" beforeDir="false" afterPath="$PROJECT_DIR$/Web/script.js" afterDir="false" />
-    </list>
+    <list default="true" id="e0b1eea1-978a-4cbb-80ee-694958d9bf11" name="Changes" comment="Tauri CRASING V1" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -50,11 +39,20 @@
       <option name="project" value="LOCAL" />
       <updated>1764509657016</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Tauri CRASING V1">
+      <option name="closed" value="true" />
+      <created>1764511872419</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1764511872419</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Tauri background" />
-    <option name="LAST_COMMIT_MESSAGE" value="Tauri background" />
+    <MESSAGE value="Tauri CRASING V1" />
+    <option name="LAST_COMMIT_MESSAGE" value="Tauri CRASING V1" />
   </component>
 </project>
