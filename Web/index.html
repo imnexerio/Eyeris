@@ -34,6 +34,11 @@
           });
         }
       }
+      
+      // Disable right-click context menu in Tauri app
+      if (isTauri) {
+        document.addEventListener('contextmenu', e => e.preventDefault());
+      }
     })();
   </script>
 </head>
@@ -298,7 +303,6 @@
           <div class="download-grid" style="margin-top: 2rem;">
             <div class="download-card web-card">
               <h3><span class="platform-icon">🌐</span> Web Version</h3>
-              <p>No download required! Use Eyeris directly in your browser with full functionality.</p>
               <a href="#" data-page="dashboard" class="nav-link web-btn">Open Web App →</a>
             </div>
             
