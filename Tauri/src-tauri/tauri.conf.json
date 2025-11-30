@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "Eyeris",
   "version": "1.0.0",
-  "identifier": "com.eyeris.app",
+  "identifier": "com.imnexerio.eyeris",
   "build": {
     "frontendDist": "../../Web"
   },
@@ -20,7 +20,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://cdn.jsdelivr.net https://storage.googleapis.com blob:; img-src 'self' data: blob:; media-src 'self' blob:;"
+      "csp": "default-src 'self' 'unsafe-inline' 'unsafe-eval' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.skypack.dev https://*.gstatic.com; connect-src 'self' https: blob: data:; img-src 'self' data: blob: https:; media-src 'self' blob: mediastream:; worker-src 'self' blob:;"
     }
   },
   "bundle": {
