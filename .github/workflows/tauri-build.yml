@@ -93,31 +93,55 @@ jobs:
       - name: Rename and upload portable executable (Windows)
         if: matrix.platform == 'windows-latest' && startsWith(github.ref, 'refs/tags/')
         run: |
-          Copy-Item "${{ matrix.portable_path }}" "Eyeris-Windows-Portable.exe"
-          gh release upload ${{ github.ref_name }} "Eyeris-Windows-Portable.exe" --clobber
+          $exe = Get-ChildItem -Path "Tauri/src-tauri/target/release" -Filter "*.exe" | Where-Object { $_.Name -notmatch "setup" } | Select-Object -First 1
+          if ($exe) {
+            Copy-Item $exe.FullName "Eyeris-Windows-Portable.exe"
+            gh release upload ${{ github.ref_name }} "Eyeris-Windows-Portable.exe" --clobber
+          } else {
+            Write-Host "No portable exe found"
+            Get-ChildItem -Path "Tauri/src-tauri/target/release" -Recurse
+          }
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Rename and upload portable executable (Linux)
         if: matrix.platform == 'ubuntu-22.04' && startsWith(github.ref, 'refs/tags/')
         run: |
-          cp "${{ matrix.portable_path }}" "Eyeris-Linux-Portable"
-          gh release upload ${{ github.ref_name }} "Eyeris-Linux-Portable" --clobber
+          if [ -f "Tauri/src-tauri/target/release/eyeris" ]; then
+            cp "Tauri/src-tauri/target/release/eyeris" "Eyeris-Linux-Portable"
+            chmod +x "Eyeris-Linux-Portable"
+            gh release upload ${{ github.ref_name }} "Eyeris-Linux-Portable" --clobber
+          else
+            echo "No portable binary found, listing directory:"
+            ls -la Tauri/src-tauri/target/release/
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Rename and upload portable executable (macOS ARM)
         if: matrix.name == 'macOS-ARM64' && startsWith(github.ref, 'refs/tags/')
         run: |
-          cp "${{ matrix.portable_path }}" "Eyeris-macOS-ARM64-Portable"
-          gh release upload ${{ github.ref_name }} "Eyeris-macOS-ARM64-Portable" --clobber
+          if [ -f "Tauri/src-tauri/target/aarch64-apple-darwin/release/eyeris" ]; then
+            cp "Tauri/src-tauri/target/aarch64-apple-darwin/release/eyeris" "Eyeris-macOS-ARM64-Portable"
+            chmod +x "Eyeris-macOS-ARM64-Portable"
+            gh release upload ${{ github.ref_name }} "Eyeris-macOS-ARM64-Portable" --clobber
+          else
+            echo "No portable binary found, listing directory:"
+            ls -la Tauri/src-tauri/target/aarch64-apple-darwin/release/ || true
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Rename and upload portable executable (macOS Intel)
         if: matrix.name == 'macOS-Intel' && startsWith(github.ref, 'refs/tags/')
         run: |
-          cp "${{ matrix.portable_path }}" "Eyeris-macOS-Intel-Portable"
-          gh release upload ${{ github.ref_name }} "Eyeris-macOS-Intel-Portable" --clobber
+          if [ -f "Tauri/src-tauri/target/x86_64-apple-darwin/release/eyeris" ]; then
+            cp "Tauri/src-tauri/target/x86_64-apple-darwin/release/eyeris" "Eyeris-macOS-Intel-Portable"
+            chmod +x "Eyeris-macOS-Intel-Portable"
+            gh release upload ${{ github.ref_name }} "Eyeris-macOS-Intel-Portable" --clobber
+          else
+            echo "No portable binary found, listing directory:"
+            ls -la Tauri/src-tauri/target/x86_64-apple-darwin/release/ || true
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
