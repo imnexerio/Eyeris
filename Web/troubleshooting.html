@@ -3,26 +3,56 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Troubleshooting - Eyeris</title>
+  <meta name="description" content="Eyeris documentation and troubleshooting guide">
+  <meta name="theme-color" content="#09090b">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <title>Docs — Eyeris</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container">
-    <div class="nav">
-      <h2><img src="icon.svg" alt="Eyeris Icon" style="width: 40%; height: 50%;"></h2>
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="downloads.html">Downloads</a></li>
-        <li><a href="troubleshooting.html">Troubleshooting</a></li>
-        <li><a href="contact.html">Contact</a></li>
-      </ul>
-    </div>
-    <section id="troubleshooting" class="troubleshooting">
-      <h2>Troubleshooting</h2>
-      <p>If you encounter any issues with the Eyeris application, please refer to the troubleshooting steps below.</p>
-      <!-- Add your troubleshooting information here -->
+  <nav class="nav">
+    <h2>
+      <img src="icon.svg" alt="Eyeris">
+      <span class="nav-brand">Eyeris</span>
+    </h2>
+    <ul>
+      <li><a href="index.html">Dashboard</a></li>
+      <li><a href="downloads.html">Downloads</a></li>
+      <li><a href="troubleshooting.html">Docs</a></li>
+      <li><a href="contact.html">About</a></li>
+    </ul>
+  </nav>
+
+  <main class="container">
+    <section class="troubleshooting">
+      <h2>Documentation</h2>
+      
+      <h3>🎯 How It Works</h3>
+      <p>Eyeris uses MediaPipe's Face Landmarker model to detect 478 facial landmarks and 52 blendshape coefficients in real-time. The blendshapes include:</p>
+      <p><strong>Eye tracking:</strong> eyeBlinkLeft, eyeBlinkRight, eyeLookDownLeft, eyeLookDownRight, eyeLookInLeft, eyeLookInRight, eyeLookOutLeft, eyeLookOutRight, eyeLookUpLeft, eyeLookUpRight, eyeSquintLeft, eyeSquintRight, eyeWideLeft, eyeWideRight</p>
+      
+      <h3>📊 Understanding the Charts</h3>
+      <p><strong>Blink History:</strong> Shows the ratio of closed-eye frames over time. Higher values indicate more frequent blinking.</p>
+      <p><strong>Real-time Eye Openness:</strong> Live visualization of how open each eye is (1 = fully open, 0 = closed).</p>
+      <p><strong>Attention Score:</strong> Average eye openness — lower scores may indicate fatigue or distraction.</p>
+      <p><strong>Fatigue Indicator:</strong> Tracks blink rate over time. Normal is 15-20 blinks/min; higher rates may indicate eye strain.</p>
+      
+      <h3>🔧 Troubleshooting</h3>
+      <p><strong>Camera not working?</strong> Make sure you've granted camera permissions in your browser. Check if another app is using the camera.</p>
+      <p><strong>Low FPS?</strong> Close other browser tabs. Eyeris uses GPU acceleration — ensure your device supports WebGL.</p>
+      <p><strong>Tracking inaccurate?</strong> Ensure good lighting on your face. Position yourself about arm's length from the camera.</p>
+      
+      <h3>🔗 Resources</h3>
+      <p><a href="https://ai.google.dev/edge/mediapipe/solutions/vision/face_landmarker" target="_blank">MediaPipe Face Landmarker Documentation</a></p>
     </section>
-  </div>
+  </main>
+  
+  <footer class="footer">
+    <p>
+      <a href="https://github.com/imnexerio/Eyeris" target="_blank">GitHub</a>
+      <a href="contact.html">Contact</a>
+    </p>
+  </footer>
 </body>
 </html>
 

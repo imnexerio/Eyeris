@@ -3,36 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contact - Eyeris</title>
+  <meta name="description" content="About Eyeris - AI-powered eye tracking project">
+  <meta name="theme-color" content="#09090b">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <title>About — Eyeris</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container">
-    <div class="nav">
-      <h2><img src="icon.svg" alt="Eyeris Icon" style="width: 40%; height: 50%;"></h2>
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="downloads.html">Downloads</a></li>
-        <li><a href="troubleshooting.html">Troubleshooting</a></li>
-        <li><a href="contact.html">Contact</a></li>
-      </ul>
-    </div>
-    <section id="contact" class="contact">
-      <h2>Contact</h2>
-      <p>If you have any questions or need further assistance, feel free to contact us.</p>
-      <h3>Eyeris</h3>
-      <p>Eyeris is an open-source application designed to leverage cutting-edge computer vision technologies for enhancing user experiences. At its core, Eyeris utilizes the powerful capabilities of MediaPipe, an open-source framework from Google that enables developers to build world-class machine learning solutions for mobile, edge, and web platforms.</p>
-      
-      
-      <h4>License</h4>
-      <p>This project is licensed under the MIT License - see the <a href="https://sites.google.com/view/imnexerio-eyeris/home">LICENSE</a> file for details.</p>
+  <nav class="nav">
+    <h2>
+      <img src="icon.svg" alt="Eyeris">
+      <span class="nav-brand">Eyeris</span>
+    </h2>
+    <ul>
+      <li><a href="index.html">Dashboard</a></li>
+      <li><a href="downloads.html">Downloads</a></li>
+      <li><a href="troubleshooting.html">Docs</a></li>
+      <li><a href="contact.html">About</a></li>
+    </ul>
+  </nav>
 
-      <h4>Acknowledgments</h4>
-      <p>This project is based on <a href="https://ai.google.dev/edge/mediapipe/">MediaPipe</a>.</p>
+  <main class="container">
+    <section class="contact">
+      <h2>About Eyeris</h2>
+      <p>Eyeris is an open-source eye health monitoring app that helps you prevent digital eye strain. Using AI-powered blink detection, it reminds you to take breaks and maintain healthy screen habits.</p>
+      
+      <h3>🎯 The Problem</h3>
+      <p>When staring at screens, our blink rate drops by up to 66% — from 15-20 blinks/min to just 5-7. This causes dry eyes, fatigue, headaches, and long-term vision problems. Over 50% of computer users experience digital eye strain.</p>
+      
+      <h3>💡 The Solution</h3>
+      <p>Eyeris monitors your blink rate in real-time and alerts you when it drops too low. It also implements the 20-20-20 rule: every 20 minutes, look at something 20 feet away for 20 seconds.</p>
 
-      <p>Join us in developing Eyeris and help shape the future of mobile computer vision applications!</p>
+      <h3>✨ Features</h3>
+      <p>• Real-time blink rate monitoring<br>
+      • Eye strain detection with visual alerts<br>
+      • Smart 20-20-20 break reminders<br>
+      • Session analytics and history<br>
+      • Background monitoring (works in other tabs)<br>
+      • 100% privacy — all processing is local</p>
+      
+      <h3>🛠 Technology</h3>
+      <p>Powered by <a href="https://ai.google.dev/edge/mediapipe/" target="_blank">MediaPipe</a> Face Landmarker, Chart.js for visualizations, and modern web APIs for camera access and background processing.</p>
+      
+      <h3>📜 License</h3>
+      <p>MIT License — free to use, modify, and distribute.</p>
+      
+      <h3>👤 Contact</h3>
+      <p>Find the project on <a href="https://github.com/imnexerio/Eyeris" target="_blank">GitHub</a></p>
     </section>
-  </div>
+  </main>
+  
+  <footer class="footer">
+    <p>
+      <a href="https://github.com/imnexerio/Eyeris" target="_blank">GitHub</a>
+      <a href="contact.html">Contact</a>
+    </p>
+  </footer>
 </body>
 </html>
 

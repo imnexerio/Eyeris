@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" type="image/png" href="icon.svg">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
   <meta charset="utf-8">
-  <meta http-equiv="Cache-control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-  <title>Eyeris</title>
+  <meta name="description" content="Eyeris - Real-time AI-powered eye tracking and blink detection dashboard">
+  <meta name="theme-color" content="#09090b">
+  <title>Eyeris — AI Eye Tracking</title>
   
   <!-- Chart.js v4.5.1 -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1"></script>
@@ -20,48 +20,242 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container">
-    <div class="nav">
-        <h2><img src="icon.svg" alt="Eyeris Icon" style="width: 40%; height: 50%;"></h2>
-        <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="downloads.html">Downloads</a></li>
-            <li><a href="troubleshooting.html">Troubleshooting</a></li>
-            <li><a href="contact.html">Contact</a></li>
-        </ul>
-    </div>
-    <section id="hero" class="hero">
-        <div class="hero-text">
-            <h1>Welcome to Eyeris</h1>
-            <p>Real-time Eye detection using the latest AI technology.</p>
-        </div>
+  <nav class="nav">
+    <h2>
+      <img src="icon.svg" alt="Eyeris">
+      <span class="nav-brand">Eyeris</span>
+    </h2>
+    <ul>
+      <li><a href="index.html">Dashboard</a></li>
+      <li><a href="downloads.html">Downloads</a></li>
+      <li><a href="troubleshooting.html">Docs</a></li>
+      <li><a href="contact.html">About</a></li>
+    </ul>
+  </nav>
+
+  <main class="container">
+
+    <section class="hero">
+      <div class="hero-text">
+        <h1>Protect Your Eyes</h1>
+        <p>AI-powered eye strain detection with smart break reminders</p>
+      </div>
     </section>
 
+    <!-- Eye Health Status Banner -->
+    <div class="health-banner" id="healthBanner">
+      <div class="health-status">
+        <div class="status-icon" id="statusIcon">✅</div>
+        <div class="status-text">
+          <h3 id="statusTitle">Eyes Looking Healthy</h3>
+          <p id="statusMessage">Start tracking to monitor your eye health</p>
+        </div>
+      </div>
+      <div class="next-break">
+        <span class="break-label">Next Break</span>
+        <span class="break-timer" id="breakTimer">--:--</span>
+      </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+      <div class="stat-card">
+        <div class="stat-icon green">👁️</div>
+        <div class="stat-info">
+          <h3 id="blinkRate">--</h3>
+          <p>Blinks/min</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon cyan">⏱️</div>
+        <div class="stat-info">
+          <h3 id="sessionTime">00:00</h3>
+          <p>Screen Time</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon purple">😌</div>
+        <div class="stat-info">
+          <h3 id="breaksTaken">0</h3>
+          <p>Breaks Taken</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon orange">⚠️</div>
+        <div class="stat-info">
+          <h3 id="strainLevel">Low</h3>
+          <p>Eye Strain</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Dashboard -->
     <section id="facelandmark">
       <div id="liveView" class="videoView">
         <button id="webcamButton" class="mdc-button mdc-button--raised">
-          <span class="mdc-button__ripple"></span>
-          <span class="mdc-button__label">Start Tracking</span>
+          <span class="mdc-button__label">Start Monitoring</span>
         </button>
-    
-        <div style="position: sticky; top: 0;">
+        
+        <div style="position: relative;">
           <video id="webcam" style="position: absolute" autoplay playsinline></video>
           <canvas class="output_canvas" id="output_canvas" style="position: relative;"></canvas>
         </div>
-    
+        
         <ul class="blend-shapes-list" id="video-blend-shapes"></ul>
       </div>
-    
+      
       <div id="analysis" class="analysis_div">
-        <canvas id="eyeBlinkChart" width="400" height="200"></canvas>
+        <div class="chart-header">
+          <div class="chart-title">
+            <span class="chart-dot green"></span>
+            <h3>Blink Rate Over Time</h3>
+          </div>
+          <span class="chart-badge">Live</span>
+        </div>
+        <p class="chart-desc">Healthy blink rate: 15-20 per minute. Low rate = eye strain risk.</p>
+        <div class="chart-wrapper">
+          <canvas id="eyeBlinkChart"></canvas>
+        </div>
+        <div class="metrics-grid">
+          <div class="metric-box">
+            <div class="metric-label">Left Eye</div>
+            <div class="metric-value purple" id="leftEyeMetric">--%</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Right Eye</div>
+            <div class="metric-value cyan" id="rightEyeMetric">--%</div>
+          </div>
+        </div>
       </div>
     </section>
-  </div>
+
+    <!-- 20-20-20 Rule Card -->
+    <div class="rule-card">
+      <div class="rule-header">
+        <h3>👀 The 20-20-20 Rule</h3>
+      </div>
+      <div class="rule-content">
+        <div class="rule-item">
+          <div class="rule-number">20</div>
+          <p>Every <strong>20 minutes</strong></p>
+        </div>
+        <div class="rule-divider">→</div>
+        <div class="rule-item">
+          <div class="rule-number">20</div>
+          <p>Look at something <strong>20 feet</strong> away</p>
+        </div>
+        <div class="rule-divider">→</div>
+        <div class="rule-item">
+          <div class="rule-number">20</div>
+          <p>For at least <strong>20 seconds</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Health Charts -->
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title">
+            <span class="chart-dot purple"></span>
+            <h3>Real-time Eye Openness</h3>
+          </div>
+        </div>
+        <p>Lower values may indicate fatigue or strain</p>
+        <div class="chart-wrapper">
+          <canvas id="realtimeChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title">
+            <span class="chart-dot cyan"></span>
+            <h3>Blink Distribution</h3>
+          </div>
+        </div>
+        <p>Balanced blinking keeps both eyes healthy</p>
+        <div class="chart-wrapper">
+          <canvas id="blinkDistChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title">
+            <span class="chart-dot green"></span>
+            <h3>Eye Comfort Score</h3>
+          </div>
+        </div>
+        <p>Based on blink rate and openness patterns</p>
+        <div class="chart-wrapper">
+          <canvas id="attentionChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title">
+            <span class="chart-dot orange"></span>
+            <h3>Strain Risk Level</h3>
+          </div>
+        </div>
+        <p>🟢 Low &nbsp; 🟡 Moderate &nbsp; 🔴 High — Take a break!</p>
+        <div class="chart-wrapper">
+          <canvas id="fatigueChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tips Section -->
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="tip-icon">💡</div>
+        <h4>Proper Lighting</h4>
+        <p>Avoid glare on your screen. Position lights to the side, not behind or in front of you.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">📏</div>
+        <h4>Screen Distance</h4>
+        <p>Keep your screen at arm's length (about 25 inches) and slightly below eye level.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">💧</div>
+        <h4>Stay Hydrated</h4>
+        <p>Drink water regularly. Dehydration can worsen dry eyes and eye strain.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🌙</div>
+        <h4>Night Mode</h4>
+        <p>Use dark mode or blue light filters, especially in the evening.</p>
+      </div>
+    </div>
+  </main>
   
   <section id="about" class="about">
-    <h2>About</h2>
-    <p>This Eyeris application uses advanced AI models to detect and visualize facial landmarks in real-time. It leverages the MediaPipe FaceLandmarker task to provide accurate and efficient face landmark detection. Whether you are a developer looking to integrate facial recognition into your app or a user curious about how AI sees your face, this tool offers a glimpse into the future of interactive computer vision.</p>
+    <h2>Why Eye Health Matters</h2>
+    <p>Digital eye strain affects over 50% of computer users. Symptoms include dry eyes, headaches, blurred vision, and neck pain. Eyeris uses AI to monitor your blink rate — a key indicator of eye strain. When you stare at screens, your blink rate drops by up to 66%, causing dryness and fatigue. Our smart alerts remind you to take breaks before strain sets in.</p>
   </section>
+
+  <!-- Break Reminder Modal -->
+  <div class="break-modal" id="breakModal">
+    <div class="break-modal-content">
+      <div class="break-emoji">👀</div>
+      <h2>Time for an Eye Break!</h2>
+      <p>Look at something 20 feet away for 20 seconds</p>
+      <div class="break-countdown" id="breakCountdown">20</div>
+      <button class="break-btn" id="skipBreakBtn">Skip Break</button>
+      <button class="break-btn primary" id="startBreakBtn">Start 20s Timer</button>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>
+      <a href="https://github.com/imnexerio/Eyeris" target="_blank">GitHub</a>
+      <a href="contact.html">Contact</a>
+      <a href="https://ai.google.dev/edge/mediapipe/solutions/vision/face_landmarker" target="_blank">MediaPipe Docs</a>
+    </p>
+  </footer>
 
   <script src="script.js" type="module"></script>
 </body>
