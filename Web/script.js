@@ -1,7 +1,11 @@
 import { FaceLandmarker, FilesetResolver, DrawingUtils } from "./lib/mediapipe/vision_bundle.mjs";
 
-// Register Service Worker for offline support
-if ('serviceWorker' in navigator) {
+// Detect if running in Tauri (native app)
+const isTauri = window.__TAURI__ !== undefined;
+console.log(`Eyeris running in ${isTauri ? 'Tauri (native)' : 'Web Browser'} mode`);
+
+// Register Service Worker for offline support (web only)
+if ('serviceWorker' in navigator && !isTauri) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js')
       .then((registration) => {
@@ -80,9 +84,9 @@ const breakCountdown = document.getElementById('breakCountdown');
 const startBreakBtn = document.getElementById('startBreakBtn');
 const skipBreakBtn = document.getElementById('skipBreakBtn');
 
-// Audio context functions
+// Audio context functions (web browser workaround only)
 function createKeepAliveAudio() {
-  if (audioContext) return;
+  if (audioContext || isTauri) return; // Tauri doesn't need this workaround
   try {
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
     silentAudioNode = audioContext.createOscillator();
@@ -490,9 +494,11 @@ let lastVideoTime = -1;
 let results = undefined;
 const drawingUtils = new DrawingUtils(canvasCtx);
 
+// In Tauri, we don't need special background handling - it runs natively
+// For web browsers, switch to interval-based processing when tab is hidden
 document.addEventListener("visibilitychange", () => {
   isPageVisible = !document.hidden;
-  if (webcamRunning) {
+  if (webcamRunning && !isTauri) {
     if (document.hidden) {
       startBackgroundProcessing();
     } else {
@@ -503,7 +509,7 @@ document.addEventListener("visibilitychange", () => {
 });
 
 function startBackgroundProcessing() {
-  if (processingInterval) return;
+  if (processingInterval || isTauri) return; // Tauri doesn't need this workaround
   processingInterval = setInterval(() => {
     if (webcamRunning) processFrame();
   }, FRAME_INTERVAL);

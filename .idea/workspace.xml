@@ -4,35 +4,38 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="879e10e4-ef10-415d-9d98-30d1667dd18f" name="Changes" comment="Icon update" />
+    <list default="true" id="e0b1eea1-978a-4cbb-80ee-694958d9bf11" name="Changes" comment="Icon update">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/tauri-build.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/tauri-build.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tauri/src-tauri/tauri.conf.json" beforeDir="false" afterPath="$PROJECT_DIR$/Tauri/src-tauri/tauri.conf.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Web/script.js" beforeDir="false" afterPath="$PROJECT_DIR$/Web/script.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "git-widget-placeholder": "main",
-    "node.js.selected.package.tslint": "(autodetect)"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/imnexerio/Eyeris.git&quot;,
+    &quot;accountId&quot;: &quot;df1d3675-ac96-440b-9282-9e2140cb848f&quot;
   }
-}]]></component>
+}</component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;
+  }
+}</component>
   <component name="TaskManager">
-    <task id="LOCAL-00001" summary="Icon update">
-      <option name="closed" value="true" />
-      <created>1764507125540</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1764507125540</updated>
-    </task>
-    <option name="localTasksCounter" value="2" />
     <servers />
-  </component>
-  <component name="VcsManagerConfiguration">
-    <MESSAGE value="Icon update" />
-    <option name="LAST_COMMIT_MESSAGE" value="Icon update" />
   </component>
 </project>
