@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "Eyeris",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "identifier": "com.imnexerio.eyeris",
   "build": {
     "frontendDist": "../../Web"
@@ -33,9 +33,17 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
+    "resources": [],
     "windows": {
+      "nsis": {
+        "installerIcon": "icons/icon.ico",
+        "headerImage": "icons/icon.png",
+        "sidebarImage": "icons/icon.png"
+      },
       "wix": {
-        "language": "en-US"
+        "language": "en-US",
+        "bannerPath": "icons/icon.png",
+        "dialogImagePath": "icons/icon.png"
       }
     }
   }
