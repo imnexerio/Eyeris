@@ -24,14 +24,36 @@
       <span class="nav-brand">Eyeris</span>
     </h2>
     <ul>
-      <li><a href="index.html">Dashboard</a></li>
-      <li><a href="downloads.html">Downloads</a></li>
-      <li><a href="troubleshooting.html">Docs</a></li>
-      <li><a href="contact.html">About</a></li>
+      <li><a href="#dashboard" class="nav-link active" data-page="dashboard">Dashboard</a></li>
+      <li><a href="#downloads" class="nav-link" data-page="downloads">Downloads</a></li>
+      <li><a href="#docs" class="nav-link" data-page="docs">Docs</a></li>
+      <li><a href="#about" class="nav-link" data-page="about">About</a></li>
     </ul>
   </nav>
 
-  <main class="container">
+  <!-- Persistent Mini Player - Shows when not on Dashboard -->
+  <div id="miniPlayer" class="mini-player" style="display: none;">
+    <div class="mini-player-content">
+      <div class="mini-video-container">
+        <video id="miniWebcam" autoplay playsinline muted></video>
+        <div class="mini-status">
+          <span class="mini-dot"></span>
+          <span id="miniBlinkRate">--</span> blinks/min
+        </div>
+      </div>
+      <div class="mini-stats">
+        <span>⏱️ <span id="miniSessionTime">00:00</span></span>
+        <span>😌 <span id="miniStrainLevel">Low</span></span>
+      </div>
+      <button id="backToDashboard" class="mini-btn">← Dashboard</button>
+    </div>
+  </div>
+
+  <!-- Page Content Container -->
+  <div id="pageContent">
+    <!-- Dashboard Page (default) -->
+    <div id="page-dashboard" class="page-section active">
+      <main class="container">
 
     <section class="hero">
       <div class="hero-text">
@@ -228,12 +250,131 @@
         <p>Use dark mode or blue light filters, especially in the evening.</p>
       </div>
     </div>
-  </main>
-  
-  <section id="about" class="about">
-    <h2>Why Eye Health Matters</h2>
-    <p>Digital eye strain affects over 50% of computer users. Symptoms include dry eyes, headaches, blurred vision, and neck pain. Eyeris uses AI to monitor your blink rate — a key indicator of eye strain. When you stare at screens, your blink rate drops by up to 66%, causing dryness and fatigue. Our smart alerts remind you to take breaks before strain sets in.</p>
-  </section>
+
+    <section class="about">
+      <h2>Why Eye Health Matters</h2>
+      <p>Digital eye strain affects over 50% of computer users. Symptoms include dry eyes, headaches, blurred vision, and neck pain. Eyeris uses AI to monitor your blink rate — a key indicator of eye strain. When you stare at screens, your blink rate drops by up to 66%, causing dryness and fatigue. Our smart alerts remind you to take breaks before strain sets in.</p>
+    </section>
+      </main>
+    </div>
+    <!-- End Dashboard Page -->
+
+    <!-- Downloads Page -->
+    <div id="page-downloads" class="page-section">
+      <main class="container">
+        <section class="downloads">
+          <h2>Downloads</h2>
+          <p>Get the Eyeris application for your platform. All versions include real-time eye tracking powered by MediaPipe.</p>
+          
+          <div class="version-badge loading" id="versionBadge">
+            <div class="loading-spinner"></div>
+            <span>Loading latest release...</span>
+          </div>
+
+          <div id="downloadContent">
+            <div class="loading-spinner" style="margin: 2rem auto;"></div>
+          </div>
+
+          <div class="download-grid" style="margin-top: 2rem;">
+            <div class="download-card web-card">
+              <h3><span class="platform-icon">🌐</span> Web Version</h3>
+              <p>No download required! Use Eyeris directly in your browser with full functionality.</p>
+              <a href="#" data-page="dashboard" class="nav-link web-btn">Open Web App →</a>
+            </div>
+            
+            <div class="download-card">
+              <h3><span class="platform-icon">📦</span> Source Code</h3>
+              <p>View the source code, contribute, or build from source.</p>
+              <ul class="download-links">
+                <li>
+                  <a href="https://github.com/imnexerio/Eyeris" target="_blank">
+                    <span class="file-info">
+                      <span class="file-name">GitHub Repository</span>
+                      <span class="file-desc">View source & contribute</span>
+                    </span>
+                    <span>→</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="https://github.com/imnexerio/Eyeris/releases" target="_blank">
+                    <span class="file-info">
+                      <span class="file-name">All Releases</span>
+                      <span class="file-desc">View release history</span>
+                    </span>
+                    <span>→</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <!-- End Downloads Page -->
+
+    <!-- Docs Page -->
+    <div id="page-docs" class="page-section">
+      <main class="container">
+        <section class="troubleshooting">
+          <h2>Documentation</h2>
+          
+          <h3>🎯 How It Works</h3>
+          <p>Eyeris uses MediaPipe's Face Landmarker model to detect 478 facial landmarks and 52 blendshape coefficients in real-time. The blendshapes include:</p>
+          <p><strong>Eye tracking:</strong> eyeBlinkLeft, eyeBlinkRight, eyeLookDownLeft, eyeLookDownRight, eyeLookInLeft, eyeLookInRight, eyeLookOutLeft, eyeLookOutRight, eyeLookUpLeft, eyeLookUpRight, eyeSquintLeft, eyeSquintRight, eyeWideLeft, eyeWideRight</p>
+          
+          <h3>📊 Understanding the Charts</h3>
+          <p><strong>Blink History:</strong> Shows the ratio of closed-eye frames over time. Higher values indicate more frequent blinking.</p>
+          <p><strong>Real-time Eye Openness:</strong> Live visualization of how open each eye is (1 = fully open, 0 = closed).</p>
+          <p><strong>Attention Score:</strong> Average eye openness — lower scores may indicate fatigue or distraction.</p>
+          <p><strong>Fatigue Indicator:</strong> Tracks blink rate over time. Normal is 15-20 blinks/min; higher rates may indicate eye strain.</p>
+          
+          <h3>🔧 Troubleshooting</h3>
+          <p><strong>Camera not working?</strong> Make sure you've granted camera permissions in your browser. Check if another app is using the camera.</p>
+          <p><strong>Low FPS?</strong> Close other browser tabs. Eyeris uses GPU acceleration — ensure your device supports WebGL.</p>
+          <p><strong>Tracking inaccurate?</strong> Ensure good lighting on your face. Position yourself about arm's length from the camera.</p>
+          
+          <h3>🔗 Resources</h3>
+          <p><a href="https://ai.google.dev/edge/mediapipe/solutions/vision/face_landmarker" target="_blank">MediaPipe Face Landmarker Documentation</a></p>
+        </section>
+      </main>
+    </div>
+    <!-- End Docs Page -->
+
+    <!-- About Page -->
+    <div id="page-about" class="page-section">
+      <main class="container">
+        <section class="contact">
+          <h2>About Eyeris</h2>
+          <p>Eyeris is an open-source eye health monitoring app that helps you prevent digital eye strain. Using AI-powered blink detection, it reminds you to take breaks and maintain healthy screen habits.</p>
+          
+          <h3>🎯 The Problem</h3>
+          <p>When staring at screens, our blink rate drops by up to 66% — from 15-20 blinks/min to just 5-7. This causes dry eyes, fatigue, headaches, and long-term vision problems. Over 50% of computer users experience digital eye strain.</p>
+          
+          <h3>💡 The Solution</h3>
+          <p>Eyeris monitors your blink rate in real-time and alerts you when it drops too low. It also implements the 20-20-20 rule: every 20 minutes, look at something 20 feet away for 20 seconds.</p>
+
+          <h3>✨ Features</h3>
+          <p>• Real-time blink rate monitoring<br>
+          • Eye strain detection with visual alerts<br>
+          • Smart 20-20-20 break reminders<br>
+          • Session analytics and history<br>
+          • Background monitoring (works in other tabs)<br>
+          • 100% privacy — all processing is local</p>
+          
+          <h3>🛠 Technology</h3>
+          <p>Powered by <a href="https://ai.google.dev/edge/mediapipe/" target="_blank">MediaPipe</a> Face Landmarker, Chart.js for visualizations, and modern web APIs for camera access and background processing.</p>
+          
+          <h3>📜 License</h3>
+          <p>MIT License — free to use, modify, and distribute.</p>
+          
+          <h3>👤 Contact</h3>
+          <p>Find the project on <a href="https://github.com/imnexerio/Eyeris" target="_blank">GitHub</a></p>
+        </section>
+      </main>
+    </div>
+    <!-- End About Page -->
+  </div>
+  <!-- End Page Content Container -->
 
   <!-- Break Reminder Modal -->
   <div class="break-modal" id="breakModal">
@@ -250,12 +391,14 @@
   <footer class="footer">
     <p>
       <a href="https://github.com/imnexerio/Eyeris" target="_blank">GitHub</a>
-      <a href="contact.html">Contact</a>
+      <a href="#" data-page="about" class="nav-link">About</a>
       <a href="https://ai.google.dev/edge/mediapipe/solutions/vision/face_landmarker" target="_blank">MediaPipe Docs</a>
     </p>
   </footer>
 
   <script src="tauri-links.js" type="module"></script>
+  <script src="spa-router.js"></script>
+  <script src="downloads-loader.js"></script>
   <script src="script.js" type="module"></script>
 </body>
 </html>

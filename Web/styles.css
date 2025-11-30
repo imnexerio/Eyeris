@@ -1411,3 +1411,291 @@ video {
     --container-padding: var(--space-2xl);
   }
 }
+
+/* =============================================
+   SPA PAGE SECTIONS
+   ============================================= */
+
+.page-section {
+  display: none;
+}
+
+.page-section.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =============================================
+   MINI PLAYER (Persistent Tracking Widget)
+   ============================================= */
+
+.mini-player {
+  position: fixed;
+  top: 80px;
+  right: var(--space-md);
+  z-index: 1000;
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--card-radius);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.mini-player-content {
+  padding: var(--space-sm);
+}
+
+.mini-video-container {
+  position: relative;
+  width: 160px;
+  height: 120px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #000;
+}
+
+.mini-video-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+.mini-status {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  right: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 4px;
+  font-size: 0.7rem;
+  color: var(--text-primary);
+}
+
+.mini-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-tertiary);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.mini-stats {
+  display: flex;
+  gap: var(--space-sm);
+  padding: var(--space-xs) 0;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.mini-stats span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mini-btn {
+  width: 100%;
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--accent-primary);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.mini-btn:hover {
+  background: #7c3aed;
+}
+
+@media (max-width: 480px) {
+  .mini-player {
+    top: auto;
+    bottom: var(--space-md);
+    right: var(--space-sm);
+    left: var(--space-sm);
+  }
+  
+  .mini-video-container {
+    width: 100%;
+    height: 100px;
+  }
+}
+
+/* =============================================
+   DOWNLOADS PAGE STYLES
+   ============================================= */
+
+.download-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.download-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.2s ease;
+}
+
+.download-card:hover {
+  border-color: rgba(139, 92, 246, 0.4);
+  background: rgba(255,255,255,0.05);
+}
+
+.download-card h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.download-card .platform-icon {
+  font-size: 1.5rem;
+}
+
+.download-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.download-links a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  border-radius: 8px;
+  color: #e4e4e7;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.download-links a:hover {
+  background: rgba(139, 92, 246, 0.2);
+  border-color: rgba(139, 92, 246, 0.4);
+}
+
+.download-links .file-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.download-links .file-name {
+  font-weight: 500;
+}
+
+.download-links .file-desc {
+  font-size: 0.8rem;
+  color: #71717a;
+}
+
+.download-links .file-size {
+  font-size: 0.8rem;
+  color: #71717a;
+  white-space: nowrap;
+}
+
+.version-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 20px;
+  color: #10b981;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.version-badge.loading {
+  background: rgba(113, 113, 122, 0.1);
+  border-color: rgba(113, 113, 122, 0.3);
+  color: #71717a;
+}
+
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.1);
+  border-top-color: #8b5cf6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-msg {
+  color: #ef4444;
+  padding: 1rem;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+
+.web-card {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(6, 182, 212, 0.1));
+  border-color: rgba(139, 92, 246, 0.3);
+}
+
+.web-btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  margin-top: 0.5rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.web-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+

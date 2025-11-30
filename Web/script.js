@@ -457,6 +457,26 @@ if (hasGetUserMedia()) {
   enableWebcamButton.addEventListener("click", enableCam);
 }
 
+// Mini player elements
+const miniWebcam = document.getElementById('miniWebcam');
+const miniBlinkRate = document.getElementById('miniBlinkRate');
+const miniSessionTime = document.getElementById('miniSessionTime');
+const miniStrainLevel = document.getElementById('miniStrainLevel');
+
+// Update mini player when tracking state changes
+function updateMiniPlayerStream() {
+  if (miniWebcam && video.srcObject) {
+    miniWebcam.srcObject = video.srcObject;
+  }
+}
+
+// Update mini player stats
+function updateMiniPlayerStats(blinkRate, sessionTime, strainLevel) {
+  if (miniBlinkRate) miniBlinkRate.textContent = blinkRate;
+  if (miniSessionTime) miniSessionTime.textContent = sessionTime;
+  if (miniStrainLevel) miniStrainLevel.textContent = strainLevel;
+}
+
 function enableCam(event) {
   if (!faceLandmarker) {
     console.log("Wait! faceLandmarker not loaded yet.");
@@ -464,12 +484,17 @@ function enableCam(event) {
   }
   if (webcamRunning === true) {
     webcamRunning = false;
+    window.isWebcamTracking = false;
     enableWebcamButton.innerText = "Start Monitoring";
     stopBackgroundProcessing();
     destroyKeepAliveAudio();
     video.srcObject.getTracks().forEach(track => track.stop());
+    if (miniWebcam) miniWebcam.srcObject = null;
+    // Update SPA router
+    if (window.spaRouter) window.spaRouter.updateMiniPlayer();
   } else {
     webcamRunning = true;
+    window.isWebcamTracking = true;
     sessionStartTime = Date.now();
     lastBreakTime = Date.now();
     enableWebcamButton.innerText = "Stop Monitoring";
@@ -479,6 +504,11 @@ function enableCam(event) {
     const constraints = { video: true };
     navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
       video.srcObject = stream;
+      // Share stream with mini player
+      updateMiniPlayerStream();
+      // Update SPA router
+      if (window.spaRouter) window.spaRouter.updateMiniPlayer();
+      
       video.addEventListener("loadeddata", () => {
         if (document.hidden) {
           startBackgroundProcessing();
@@ -713,6 +743,16 @@ setInterval(() => {
   const blinkRate = sessionMins > 0 ? Math.round(blinkCount / sessionMins) : 0;
   
   document.getElementById('blinkRate').textContent = blinkRate;
+  
+  // Calculate session time for display
+  const elapsed = Date.now() - sessionStartTime;
+  const mins = Math.floor(elapsed / 60000);
+  const secs = Math.floor((elapsed % 60000) / 1000);
+  const sessionTimeStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  document.getElementById('sessionTime').textContent = sessionTimeStr;
+  
+  // Update mini player stats
+  updateMiniPlayerStats(blinkRate, sessionTimeStr, currentStrainLevel);
   
   // Add data point with timestamp label
   const now = new Date();

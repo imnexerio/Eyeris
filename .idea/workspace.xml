@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e0b1eea1-978a-4cbb-80ee-694958d9bf11" name="Changes" comment="Tauri CRASING V1" />
+    <list default="true" id="e0b1eea1-978a-4cbb-80ee-694958d9bf11" name="Changes" comment="Tauri CRASING V1">
+      <change beforePath="$PROJECT_DIR$/Web/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/Web/index.html" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

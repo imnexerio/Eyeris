@@ -1,5 +1,5 @@
 // Eyeris Service Worker - Enables offline functionality
-const CACHE_NAME = 'eyeris-v1.0.0';
+const CACHE_NAME = 'eyeris-v1.1.0';
 
 // Files to cache for offline use
 const STATIC_ASSETS = [
@@ -7,6 +7,8 @@ const STATIC_ASSETS = [
   './index.html',
   './styles.css',
   './script.js',
+  './spa-router.js',
+  './downloads-loader.js',
   './icon.svg',
   './icon_eyeris.png',
   './lib/chart.umd.min.js',
