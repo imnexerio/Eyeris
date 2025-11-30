@@ -5,7 +5,7 @@
   // Detect if running in Tauri (native app)
   const isTauri = window.__TAURI__ !== undefined;
   
-  if (!isTauri) return; // Only run in Tauri
+  if (!isTauri) return;
   
   console.log('Tauri link handler initialized');
   

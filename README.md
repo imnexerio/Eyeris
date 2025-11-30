@@ -9,26 +9,15 @@ Eyeris is a comprehensive, cross-platform eye tracking solution leveraging Googl
 
 ## 📥 Downloads
 
-### Desktop (Tauri)
+| Platform | Formats |
+|----------|---------|
+| **Windows** | Installer (.exe), MSI, Portable |
+| **macOS** | DMG (Apple Silicon & Intel) |
+| **Linux** | .deb, .rpm, AppImage |
+| **Android** | APK |
+| **Web** | [Use directly in browser](https://imnexerio.github.io/Eyeris/) |
 
-| Platform | Download |
-|----------|----------|
-| **Windows** | [Installer (.exe)](https://github.com/imnexerio/Eyeris/releases/latest/download/Eyeris_1.0.3_x64-setup.exe) · [MSI](https://github.com/imnexerio/Eyeris/releases/latest/download/Eyeris_1.0.3_x64_en-US.msi) |
-| **macOS (Apple Silicon)** | [DMG](https://github.com/imnexerio/Eyeris/releases/latest/download/Eyeris_1.0.3_aarch64.dmg) |
-| **macOS (Intel)** | [DMG](https://github.com/imnexerio/Eyeris/releases/latest/download/Eyeris_1.0.3_x64.dmg) |
-| **Linux** | [.deb](https://github.com/imnexerio/Eyeris/releases/latest/download/eyeris_1.0.3_amd64.deb) · [.rpm](https://github.com/imnexerio/Eyeris/releases/latest/download/eyeris-1.0.3-1.x86_64.rpm) · [AppImage](https://github.com/imnexerio/Eyeris/releases/latest/download/eyeris_1.0.3_amd64.AppImage) |
-
-### Mobile
-
-| Platform | Download |
-|----------|----------|
-| **Android** | [APK](https://github.com/imnexerio/Eyeris/releases/latest/download/Eyeris.apk) |
-
-### Web
-
-No installation required! Visit the [Web App](https://imnexerio.github.io/Eyeris/) directly in your browser.
-
-> 📦 [View all releases](https://github.com/imnexerio/Eyeris/releases)
+👉 **[Download Latest Release](https://github.com/imnexerio/Eyeris/releases/latest)** · [All Releases](https://github.com/imnexerio/Eyeris/releases)
 
 ## 🌟 Overview
 
