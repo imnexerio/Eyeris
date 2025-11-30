@@ -20,7 +20,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self' 'unsafe-inline' 'unsafe-eval' https: blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.skypack.dev https://*.gstatic.com; connect-src 'self' https: blob: data:; img-src 'self' data: blob: https:; media-src 'self' blob: mediastream:; worker-src 'self' blob:;"
+      "csp": "default-src 'self' 'unsafe-inline' 'unsafe-eval' blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self' blob: data:; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; worker-src 'self' blob:;"
     }
   },
   "bundle": {
