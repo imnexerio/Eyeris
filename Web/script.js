@@ -12,6 +12,11 @@ let leftEyeClosed = 0;
 let rightEyeOpen = 0;
 let rightEyeClosed = 0;
 
+// Background processing variables
+let processingInterval = null;
+let isPageVisible = true;
+const FRAME_INTERVAL = 33; // ~30fps when in background
+
 // Function to retrieve and parse stored data
 function getStoredEyeBlinkData() {
   const serializedData = localStorage.getItem('eyeBlinkData');
@@ -139,6 +144,7 @@ function enableCam(event) {
   if (webcamRunning === true) {
     webcamRunning = false;
     enableWebcamButton.innerText = "Start Tracking";
+    stopBackgroundProcessing();
     video.srcObject.getTracks().forEach(track => track.stop());
   } else {
     webcamRunning = true;
@@ -148,7 +154,14 @@ function enableCam(event) {
     };
     navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
       video.srcObject = stream;
-      video.addEventListener("loadeddata", predictWebcam);
+      video.addEventListener("loadeddata", () => {
+        // Start with appropriate method based on visibility
+        if (document.hidden) {
+          startBackgroundProcessing();
+        } else {
+          predictWebcam();
+        }
+      });
     });
   }
 }
@@ -157,15 +170,41 @@ let lastVideoTime = -1;
 let results = undefined;
 const drawingUtils = new DrawingUtils(canvasCtx);
 
-async function predictWebcam() {
-  const radio = video.videoHeight / video.videoWidth;
-  video.style.width = videoWidth + "px";
-  video.style.height = videoWidth * radio + "px";
-  canvasElement.style.width = videoWidth + "px";
-  canvasElement.style.height = videoWidth * radio + "px";
-  canvasElement.width = video.videoWidth;
-  canvasElement.height = video.videoHeight;
+// Handle page visibility changes to keep tracking in background
+document.addEventListener("visibilitychange", () => {
+  isPageVisible = !document.hidden;
+  if (webcamRunning) {
+    if (document.hidden) {
+      // Tab is hidden - switch to setInterval for background processing
+      startBackgroundProcessing();
+    } else {
+      // Tab is visible - switch back to requestAnimationFrame
+      stopBackgroundProcessing();
+      predictWebcam();
+    }
+  }
+});
 
+function startBackgroundProcessing() {
+  if (processingInterval) return;
+  processingInterval = setInterval(() => {
+    if (webcamRunning) {
+      processFrame();
+    }
+  }, FRAME_INTERVAL);
+}
+
+function stopBackgroundProcessing() {
+  if (processingInterval) {
+    clearInterval(processingInterval);
+    processingInterval = null;
+  }
+}
+
+// Core frame processing logic (shared between foreground and background)
+async function processFrame() {
+  if (!faceLandmarker || !webcamRunning) return;
+  
   if (runningMode === "IMAGE") {
     runningMode = "VIDEO";
     await faceLandmarker.setOptions({ runningMode: runningMode });
@@ -177,7 +216,17 @@ async function predictWebcam() {
     results = await faceLandmarker.detectForVideo(video, startTimeMs);
   }
 
-  if (results.faceLandmarks) {
+  // Only draw when page is visible (drawing is expensive and not needed in background)
+  if (isPageVisible && results && results.faceLandmarks) {
+    // Set canvas dimensions
+    const radio = video.videoHeight / video.videoWidth;
+    video.style.width = videoWidth + "px";
+    video.style.height = videoWidth * radio + "px";
+    canvasElement.style.width = videoWidth + "px";
+    canvasElement.style.height = videoWidth * radio + "px";
+    canvasElement.width = video.videoWidth;
+    canvasElement.height = video.videoHeight;
+    
     for (const landmarks of results.faceLandmarks) {
       drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_TESSELATION, { color: "#C0C0C070", lineWidth: 1 });
       drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_RIGHT_EYE, { color: "#ff3333" });
@@ -190,9 +239,20 @@ async function predictWebcam() {
       drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_LEFT_IRIS, { color: "#ff3333" });
     }
   }
-  drawBlendShapes(videoBlendShapes, results.faceBlendshapes);
+  
+  // Always process blend shapes (even in background) for tracking
+  if (results && results.faceBlendshapes) {
+    drawBlendShapes(videoBlendShapes, results.faceBlendshapes);
+  }
+}
 
-  if (webcamRunning === true) {
+async function predictWebcam() {
+  if (!webcamRunning) return;
+  
+  await processFrame();
+
+  // Only use requestAnimationFrame when page is visible
+  if (webcamRunning && isPageVisible) {
     window.requestAnimationFrame(predictWebcam);
   }
 }
