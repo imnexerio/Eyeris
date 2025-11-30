@@ -15,15 +15,23 @@ jobs:
           - platform: 'macos-latest'
             args: '--target aarch64-apple-darwin'
             name: 'macOS-ARM64'
+            portable_ext: ''
+            portable_path: 'Tauri/src-tauri/target/aarch64-apple-darwin/release/eyeris'
           - platform: 'macos-latest'
             args: '--target x86_64-apple-darwin'
             name: 'macOS-Intel'
+            portable_ext: ''
+            portable_path: 'Tauri/src-tauri/target/x86_64-apple-darwin/release/eyeris'
           - platform: 'ubuntu-22.04'
             args: ''
             name: 'Linux'
+            portable_ext: ''
+            portable_path: 'Tauri/src-tauri/target/release/eyeris'
           - platform: 'windows-latest'
             args: ''
             name: 'Windows'
+            portable_ext: '.exe'
+            portable_path: 'Tauri/src-tauri/target/release/eyeris.exe'
 
     runs-on: ${{ matrix.platform }}
     name: Build ${{ matrix.name }}
@@ -63,6 +71,53 @@ jobs:
           args: ${{ matrix.args }}
           tagName: ${{ github.ref_name }}
           releaseName: 'Eyeris v__VERSION__'
-          releaseBody: 'Download the appropriate installer for your platform below.'
+          releaseBody: |
+            ## Downloads
+            
+            ### Windows
+            - **Portable**: `Eyeris-Windows-Portable.exe` - Just download and run, no installation needed
+            - **Installer**: `Eyeris_x64-setup.exe` - NSIS installer with Start Menu shortcuts
+            - **MSI**: `Eyeris_x64_en-US.msi` - Windows Installer package
+            
+            ### macOS
+            - **Intel**: `Eyeris_x64.dmg` - For Intel-based Macs
+            - **Apple Silicon**: `Eyeris_aarch64.dmg` - For M1/M2/M3 Macs
+            
+            ### Linux
+            - **Portable**: `Eyeris-Linux-Portable` - Just download, chmod +x, and run
+            - **AppImage**: `Eyeris_amd64.AppImage` - Universal Linux package
+            - **Debian**: `Eyeris_amd64.deb` - For Debian/Ubuntu
           releaseDraft: true
           prerelease: false
+
+      - name: Rename and upload portable executable (Windows)
+        if: matrix.platform == 'windows-latest' && startsWith(github.ref, 'refs/tags/')
+        run: |
+          Copy-Item "${{ matrix.portable_path }}" "Eyeris-Windows-Portable.exe"
+          gh release upload ${{ github.ref_name }} "Eyeris-Windows-Portable.exe" --clobber
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Rename and upload portable executable (Linux)
+        if: matrix.platform == 'ubuntu-22.04' && startsWith(github.ref, 'refs/tags/')
+        run: |
+          cp "${{ matrix.portable_path }}" "Eyeris-Linux-Portable"
+          gh release upload ${{ github.ref_name }} "Eyeris-Linux-Portable" --clobber
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Rename and upload portable executable (macOS ARM)
+        if: matrix.name == 'macOS-ARM64' && startsWith(github.ref, 'refs/tags/')
+        run: |
+          cp "${{ matrix.portable_path }}" "Eyeris-macOS-ARM64-Portable"
+          gh release upload ${{ github.ref_name }} "Eyeris-macOS-ARM64-Portable" --clobber
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Rename and upload portable executable (macOS Intel)
+        if: matrix.name == 'macOS-Intel' && startsWith(github.ref, 'refs/tags/')
+        run: |
+          cp "${{ matrix.portable_path }}" "Eyeris-macOS-Intel-Portable"
+          gh release upload ${{ github.ref_name }} "Eyeris-macOS-Intel-Portable" --clobber
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
