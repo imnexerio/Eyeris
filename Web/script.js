@@ -56,8 +56,8 @@ let currentStrainLevel = 'Low';
 let strainScore = 0;
 
 // Comfort/Attention tracking
-let comfortHistory = [];
-let strainHistory = [];
+let comfortHistory = []; // Will store {score, label} objects
+let strainHistory = []; // Will store {score, label} objects
 const MAX_HISTORY_POINTS = 30;
 
 // Background processing variables
@@ -264,7 +264,11 @@ const eyeBlinkChart = new Chart(ctx, {
         display: true,
         grid: { display: false },
         ticks: { 
-          display: false
+          display: true,
+          maxRotation: 45,
+          minRotation: 45,
+          font: { size: 9 },
+          color: '#71717a'
         }
       },
       y: { 
@@ -366,7 +370,17 @@ const attentionChart = new Chart(attentionCtx, {
     maintainAspectRatio: false,
     plugins: { legend: { display: false } },
     scales: {
-      x: { display: false },
+      x: { 
+        display: true, 
+        grid: { display: false },
+        ticks: { 
+          display: true,
+          maxRotation: 45,
+          minRotation: 45,
+          font: { size: 9 },
+          color: '#71717a'
+        }
+      },
       y: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { callback: v => v + '%' } }
     }
   }
@@ -395,7 +409,17 @@ const fatigueChart = new Chart(fatigueCtx, {
     maintainAspectRatio: false,
     plugins: { legend: { display: false } },
     scales: {
-      x: { display: false },
+      x: { 
+        display: true, 
+        grid: { display: false },
+        ticks: { 
+          display: true,
+          maxRotation: 45,
+          minRotation: 45,
+          font: { size: 9 },
+          color: '#71717a'
+        }
+      },
       y: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { callback: v => v + '%' } }
     }
   }
@@ -627,12 +651,14 @@ function updateRealtimeChart(blendShapes) {
   
   // Calculate comfort score
   const comfortScore = ((leftScore + rightScore) / 2) * 100;
-  comfortHistory.push(comfortScore);
+  const now = new Date();
+  const comfortTimeLabel = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  comfortHistory.push({ score: comfortScore, label: comfortTimeLabel });
   if (comfortHistory.length > MAX_HISTORY_POINTS) comfortHistory.shift();
   
   if (realtimeData.length % 10 === 0) {
-    attentionChart.data.labels = comfortHistory.map((_, i) => i);
-    attentionChart.data.datasets[0].data = comfortHistory;
+    attentionChart.data.labels = comfortHistory.map(d => d.label);
+    attentionChart.data.datasets[0].data = comfortHistory.map(d => d.score);
     attentionChart.update('none');
   }
 }
@@ -698,11 +724,11 @@ setInterval(() => {
   currentStrainLevel = calculateStrainLevel(blinkRate);
   document.getElementById('strainLevel').textContent = currentStrainLevel;
   
-  // Update strain chart
-  strainHistory.push(strainScore);
+  // Update strain chart with time labels
+  strainHistory.push({ score: strainScore, label: timeLabel });
   if (strainHistory.length > 20) strainHistory.shift();
-  fatigueChart.data.labels = strainHistory.map((_, i) => i);
-  fatigueChart.data.datasets[0].data = strainHistory;
+  fatigueChart.data.labels = strainHistory.map(d => d.label);
+  fatigueChart.data.datasets[0].data = strainHistory.map(d => d.score);
   fatigueChart.update('none');
   
   // Update health status based on strain
