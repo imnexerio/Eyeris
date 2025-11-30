@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e0b1eea1-978a-4cbb-80ee-694958d9bf11" name="Changes" comment="Icon update">
-      <change beforePath="$PROJECT_DIR$/.github/workflows/tauri-build.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/tauri-build.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Tauri/src-tauri/tauri.conf.json" beforeDir="false" afterPath="$PROJECT_DIR$/Tauri/src-tauri/tauri.conf.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Web/script.js" beforeDir="false" afterPath="$PROJECT_DIR$/Web/script.js" afterDir="false" />
