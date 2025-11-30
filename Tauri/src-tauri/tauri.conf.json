@@ -20,7 +20,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self' 'unsafe-inline' 'unsafe-eval' blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self' blob: data:; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; worker-src 'self' blob:;"
+      "csp": "default-src 'self' 'unsafe-inline' 'unsafe-eval' blob: data: tauri: https://tauri.localhost; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:; connect-src 'self' blob: data: https://api.github.com tauri: https://tauri.localhost; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline';"
     }
   },
   "bundle": {

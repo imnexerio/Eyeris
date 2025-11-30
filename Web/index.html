@@ -16,6 +16,26 @@
   <script src="lib/chartjs-adapter-moment.min.js"></script>
   
   <link rel="stylesheet" href="styles.css">
+  
+  <!-- Disable Service Worker in Tauri to prevent caching issues -->
+  <script>
+    (function() {
+      const isTauri = window.__TAURI__ !== undefined || 
+                      window.location.protocol === 'tauri:' || 
+                      window.location.hostname === 'tauri.localhost';
+      
+      if (isTauri && 'serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(registrations => {
+          registrations.forEach(reg => reg.unregister());
+        });
+        if ('caches' in window) {
+          caches.keys().then(names => {
+            names.forEach(name => caches.delete(name));
+          });
+        }
+      }
+    })();
+  </script>
 </head>
 <body>
   <nav class="nav">
@@ -396,9 +416,12 @@
     </p>
   </footer>
 
-  <script src="tauri-links.js" type="module"></script>
+  <!-- Load SPA router first (non-module for immediate execution) -->
   <script src="spa-router.js"></script>
   <script src="downloads-loader.js"></script>
+  <!-- Main app script -->
   <script src="script.js" type="module"></script>
+  <!-- Tauri external links handler (loaded last, only affects external links) -->
+  <script src="tauri-links.js" type="module"></script>
 </body>
 </html>

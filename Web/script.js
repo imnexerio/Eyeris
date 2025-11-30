@@ -4,9 +4,14 @@ import { FaceLandmarker, FilesetResolver, DrawingUtils } from "./lib/mediapipe/v
 const isTauri = window.__TAURI__ !== undefined;
 console.log(`Eyeris running in ${isTauri ? 'Tauri (native)' : 'Web Browser'} mode`);
 
-// Register Service Worker for offline support (web only)
+// Register Service Worker for offline support (web only, not in Tauri)
+// In Tauri, Service Workers can cause caching issues
 if ('serviceWorker' in navigator && !isTauri) {
   window.addEventListener('load', () => {
+    // Unregister any existing service workers first to clear cache
+    navigator.serviceWorker.getRegistrations().then(registrations => {
+      registrations.forEach(reg => reg.unregister());
+    });
     navigator.serviceWorker.register('./sw.js')
       .then((registration) => {
         console.log('Service Worker registered:', registration.scope);
